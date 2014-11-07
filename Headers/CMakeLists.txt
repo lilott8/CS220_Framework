@@ -1,0 +1,5 @@
+file(GLOB HEADER_FILES
+"*.h"
+)
+
+add_library(HEADER_SOURCE ${HEADER_FILES})
