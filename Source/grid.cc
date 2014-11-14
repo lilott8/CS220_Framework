@@ -1,7 +1,6 @@
 #include "../Headers/grid.h"
 #include "../Headers/edge.h"
 #include "../Headers/claim.h"
-#include <iostream>
 
 //Takes an x and y coordinate as input and creates a grid of that size filled with default nodes
 Utilities::Grid::Grid(int width, int height) {
@@ -29,7 +28,9 @@ Utilities::Grid::~Grid() {
       int height = this->get_height();
       for(int x = 0; x < width; x++) {
             for(int y = 0; y < width; y++) {
-                  delete grid.at(y).at(x);
+                if(grid.at(y).at(x) == NULL) {
+                    delete grid.at(y).at(x);
+                }
             }
       }
 }

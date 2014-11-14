@@ -19,4 +19,3 @@ cleanup:
 
 clean: cleanup
 	rm -f grid_test
-

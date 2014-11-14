@@ -1,6 +1,8 @@
 #ifndef _GRID_BASE_H_
 #define _GRID_BASE_H_
 
+#pragma once
+
 #include "node.h"
 #include "path.h"
 #include <vector>
