@@ -8,6 +8,7 @@ JSON_parser/json_parser_bison.cc
 JSON_parser/json_parser_lex.cc
 )
 
+#Add the necessary files
 include_directories(JSON_parser/Headers)
 include_directories(JSON_parser)
 
