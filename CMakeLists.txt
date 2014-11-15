@@ -8,3 +8,4 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/Headers
 )
 add_subdirectory(Source)
+add_subdirectory(Utilities)
