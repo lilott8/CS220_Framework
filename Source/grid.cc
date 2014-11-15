@@ -28,7 +28,7 @@ Utilities::Grid::~Grid() {
       int height = this->get_height();
       for(int x = 0; x < width; x++) {
             for(int y = 0; y < width; y++) {
-                delete grid.at(y).at(x);
+                //delete grid.at(x).at(y);
             }
       }
 }

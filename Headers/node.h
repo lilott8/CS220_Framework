@@ -15,7 +15,7 @@ namespace Utilities {
     class Node {
         private:
             Point coord;
-            vector<Edge*> connections;
+            vector<Edge*> connections{0};
             int cost;
 
             /* Private Mutators */
