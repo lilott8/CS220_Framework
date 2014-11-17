@@ -8,7 +8,7 @@ all: $(OBJ) main.cc
 	g++ -o grid_router $^ Utilities/JSON_parser/json_parser.so 
 
 test: all
-	./grid_test
+	./grid_router Tests/test_sample.json
 	
 %.o: %.cc
 	g++ -c $^
@@ -17,4 +17,5 @@ cleanup:
 	rm -f *.o
 
 clean: cleanup
-	rm -f grid_test
+	rm -f grid_router
+
