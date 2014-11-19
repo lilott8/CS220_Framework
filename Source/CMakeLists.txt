@@ -8,6 +8,7 @@ path.cc
 pathsegment.cc
 segmentgroup.cc
 problem_object.cc
+leenode.cpp
 )
 
 add_library(SOURCE_LIB ${LIB_SOURCE})
