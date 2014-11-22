@@ -2,6 +2,10 @@
 #include "../Headers/node.h"
 #include "../Headers/claim.h"
 
+Utilities::Node::Node() {
+
+}
+
 Utilities::Node::Node(int x, int y, int cost):coord(x,y){
     this->cost = cost;
 }

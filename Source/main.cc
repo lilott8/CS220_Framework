@@ -1,26 +1,78 @@
 
 #include "../Headers/grid.h"
 #include "../Headers/problem_object.h"
-#include <time.h>
-#include <cstdlib>
-#include <iostream>
+#include <map.h>
+#include <claim.h>
 
 using std::cerr;
 using std::cout;
 using std::endl;
 
+enum Algorithm {
+    LEE2BIT, LEE3BIT, KORN, HADLOCK, RUBEN, LEE
+};
+Algorithm resolve_algorithm(string);
+
+
 int main(int argc,char* argv[]) {
 
 	// DO NOT CHANGE THIS SECTION OF CODE
 	if(argc < 2) { 
-		cout << "Usage: ./grid_router <test_file>" << endl; 
+		cout << "Usage: ./grid_router <test_file> [<algorithm> <bi-directional> <intersection> <korn modifier>]" << endl;
+        cout << "Optional arugments: " << endl;
+        cout << "<test_file> {string}" << endl;
+        cout << "<algorithm> {lee | lee2bit | lee3bit | ruben | korn | hadlock}" << endl;
+        cout << "<bi-directional> {1 | 0}" << endl;
+        cout << "<intersection> {1 | 0}" << endl;
+        cout << "<korn modifier> {float > 0}" << endl;
 		exit(1);
 	}
 	Utilities::ProblemObject* first_problem = new Utilities::ProblemObject(std::string(argv[1]));
 	// EDIT FROM HERE DOWN
 
+    // Defaults for our variables
+    // they get altered in the switch below
+    double korn_modifier = 1.5;
+    bool bi_directional = false;
+    bool intersections = false;
+    Algorithm a_type = LEE;
+    string file = "../Tests/debug.json";
+
+    switch (argc) {
+        case 7:
+            claim("We have 7 args", kNote);
+        case 6:
+            claim("We have 6 args", kNote);
+            claim("Setting korn modifier", kDebug);
+            korn_modifier = atof(argv[5]);
+        case 5:
+            claim("We have 5 args", kNote);
+            claim("Setting intersection capability", kDebug);
+            intersections = (argv[4]=="1") ? true : false;
+        case 4:
+            claim("We have 4 args", kNote);
+            claim("Setting bi-directional capability", kDebug);
+            bi_directional = (argv[3]=="1") ? true : false;
+        case 3:
+            claim("We have 3 args", kNote);
+            claim("Setting algorithm type", kDebug);
+            a_type = resolve_algorithm(argv[2]);
+        case 2:
+        default:
+            claim("We have 2 args", kNote);
+            claim("Setting the file", kDebug);
+            file = argv[1];
+            break;
+    }
+    Map map = Map(first_problem->get_width(), first_problem->get_height());
+    map.set_blockages(first_problem->get_blockers())
+            .set_sources_and_sinks(first_problem->get_connections());
+    map.print_map();
+
+
+
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
-	Utilities::Grid g(first_problem->get_width(), first_problem->get_height());
+	//Utilities::Grid g(first_problem->get_width(), first_problem->get_height());
 
 	/*
 	Note: we do not take into account the connections or blockers that exist in the Project Object
@@ -38,7 +90,7 @@ int main(int argc,char* argv[]) {
 	*/
 
 	//Note, we create random paths just as an example of how to create paths, netlists are created similarly
-	vector<Path*> paths;
+	/*vector<Path*> paths;
 	srand(time(NULL));
 	int number_paths = first_problem->get_connections().size();
 	cout << "Creating " << number_paths << " paths...";
@@ -68,8 +120,30 @@ int main(int argc,char* argv[]) {
 	}
 
 	paths.clear();
-
+*/
 	delete first_problem;
 
 	return 0;
+}
+
+Algorithm resolve_algorithm(string a) {
+    if (a.compare("ruben") == 0) {
+        return RUBEN;
+    }
+    if (a.compare("korn") == 0) {
+        return KORN;
+    }
+    if (a.compare("hadlock") == 0) {
+        return HADLOCK;
+    }
+    if (a.compare("lee3bit") == 0) {
+        return LEE3BIT;
+    }
+    if (a.compare("lee2bit") == 0) {
+        return LEE2BIT;
+    }
+    if (a.compare("lee") == 0) {
+        return LEE;
+    }
+    return LEE;
 }

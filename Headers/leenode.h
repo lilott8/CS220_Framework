@@ -1,33 +1,35 @@
+#ifndef _LEENODE_H_
+#define _LEENODE_H_
+
+#pragma once
+
+#include "node.h"
+#include <string>
+
+using namespace Utilities;
+using namespace std;
 
 namespace Lee {
-    class LeeNode : public Utilities::Node {
+    class LeeNode : public Node {
+    public:
+        enum NodeType {
+            BLOCKED, SINK, SOURCE, NONE
+        };
 
-        class Edge;
+        LeeNode(int, int, int = 0);
+
+        ~LeeNode();
+
+        void set_type(LeeNode::NodeType);
+
+        NodeType get_type();
+
+        static string convert_type_to_string(LeeNode::NodeType);
 
     private:
-        int wave;
-        int detour;
-        int dist;
-
-    public:
-        LeeNode();
-
-        int get_x();
-        int get_y();
-        unsigned connections_size();
-        bool connections_empty();
-        bool connections_contains(Edge* edge);
-        Edge* connections_at(unsigned index);
-        int get_cost();
-
-        /* Mutators */
-        void set_coord(int x, int y);
-        void set_x_coord(int x);
-        void set_y_coord(int y);
-        void set_coord(Point coord);
-        void set_connections(vector<Edge*> connections);
-        void add_connection(Edge* connection);
-        void set_cost(int cost);
-        void remove_connection(Edge* connection);
+        // stuff for private
+        NodeType type;
     };
 }
+
+#endif //_LEENODE_H_
