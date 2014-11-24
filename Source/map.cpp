@@ -62,39 +62,42 @@ Map Map::set_blockages(vector<Blocker> b) {
 }
 
 Map Map::set_sources_and_sinks(vector<Connection> v) {
+    int y,z;
+    Route route;
+
     for(int x = 0;x < v.size();x++) {
-        Connection c = v.at(x);
+
         // Declare the source(s)
-        LeeNode temp = LeeNode(c.source);
+        LeeNode temp = LeeNode(v.at(x).source);
         temp.set_type(LeeNode::NodeType::SOURCE);
-        claim("Source: " + temp.to_string(), kWarning);
-        kSources.push_front(temp);
+        claim("Source: " + temp.to_string(), kDebug);
+        route.source = temp;
         kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SOURCE);
+
         // Declare the sink(s)
-        temp = LeeNode(c.sink.x, c.sink.y);
+        temp = LeeNode(v.at(x).sink);
         temp.set_type(LeeNode::NodeType::SINK);
-        claim("Sink: " + temp.to_string(), kWarning);
+        //claim("Sink: " + temp.to_string(), kDebug);
         kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SINK);
-        kSinks.push_front(temp);
+        route.sink = temp;
+
         // Add our connections
         kConnections.push_back(v.at(x));
-        claim("Connection: " + connection_to_string(v.at(x)), kWarning);
+        kRoutes.push_back(route);
     }
     return *this;
 }
 
-Connection Map::get_next_connection() {
-    if (kConnections.size() > 0) {
-        Connection c = kConnections.front();
-        kConnections.pop_front();
-        return c;
-    } else {
-        return Connection();
+Route Map::get_next_route() {
+    if (kRoutes.size() > 0) {
+        Route r = kRoutes.front();
+        kRoutes.pop_front();
+        return r;
     }
 }
 
-int Map::get_connections_size() {
-    return (int) kConnections.size();
+int Map::get_size_of_routes() {
+    return (int) kRoutes.size();
 }
 
 void Map::print_connections() {
@@ -156,7 +159,13 @@ void Map::print_map() {
     string output = "";
     for(int y = 0; y < kHeight; y++) {
         for(int x = 0; x < kWidth; x++) {
-            output += LeeNode::convert_type_to_string(kMap.at(x).at(y)->get_type()) + "\t";
+            if(kMap.at(x).at(y)->get_type() == LeeNode::NodeType::BLOCKED ||
+                    kMap.at(x).at(y)->get_type() == LeeNode::NodeType::SINK ||
+                    kMap.at(x).at(y)->get_type() == LeeNode::NodeType::SOURCE) {
+                output += LeeNode::convert_type_to_string(kMap.at(x).at(y)->get_type()) + "\t";
+            } else {
+                output += to_string(kMap.at(x).at(y)->get_output()) + "\t";
+            }
         }
         output += "\n";
     }

@@ -13,7 +13,14 @@ using namespace std;
 using namespace Utilities;
 using namespace Lee;
 
+struct Route {
+    Route(){};
+    LeeNode source;
+    LeeNode sink;
+};
+
 class Map {
+
 public:
     // Constructors
     Map();
@@ -22,14 +29,12 @@ public:
 
     // Methods
     vector<vector<LeeNode*> > *get_map();
-    Point* get_source_coordinates();
-    Point* get_sink_coordinates();
+    Route get_next_route();
     Map set_blockages(vector<Blocker>);
     Map set_sources_and_sinks(vector<Connection>);
     void print_map();
     void print_connections();
-    Connection get_next_connection();
-    int get_connections_size();
+    int get_size_of_routes();
     string connection_to_string(Connection);
     void add_sinks(vector<LeeNode*>);
     void add_sources(vector<LeeNode*>);
@@ -40,8 +45,7 @@ private:
     // Variables
     vector<vector<LeeNode*> > kMap;
     deque<Connection> kConnections;
-    deque<LeeNode> kSources;
-    deque<LeeNode> kSinks;
+    deque<Route> kRoutes;
     deque<Path> kPaths;
     int kDefaultSize = 10;
     int kHeight;

@@ -28,14 +28,9 @@ LeeBase &LeeBase::set_map(Map *m) {
     return *this;
 }
 
-void LeeBase::start(Connection c) {
-    claim("Name of Connection: " + c.name, kNote);
-    kSink = LeeNode(c.sink.x, c.sink.y);
-    kSource = LeeNode(c.source.x, c.source.y);
-    claim("Source: " + kSource.to_string(), kDebug);
-
-    //kMap->get_map()->at(c.sink.x).at(c.sink.y)->set_type(LeeNode::NodeType::SINK);
-    kMap->get_map()->at(c.source.x).at(c.source.y)->set_type(LeeNode::NodeType::SOURCE);
+void LeeBase::start(Route route) {
+    kSink = route.sink;
+    kSource = route.source;
 
     claim("We are starting to run our algorithm", kDebug);
 }

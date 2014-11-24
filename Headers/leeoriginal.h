@@ -1,6 +1,8 @@
 #ifndef _LEEORIGINAL_H_
 #define _LEEORIGINAL_H_
 
+#include <map.h>
+
 #pragma once
 
 namespace Lee {
@@ -10,7 +12,7 @@ namespace Lee {
         // public
         LeeOriginal();
         LeeOriginal(Map*);
-        void start(Connection);
+        void start(Route);
     private:
         int solve_recursive(int);
         vector<LeeNode> get_adjacent_coordinates(LeeNode, int);

@@ -7,23 +7,30 @@ using namespace Utilities;
 using namespace std;
 using namespace Lee;
 
+LeeNode::LeeNode() {
+}
+
 LeeNode::LeeNode(int x, int y, int cost) {
-    Node::Node(x, y, cost);
-    LeeNode::type = LeeNode::NONE;
-    LeeNode::detour = 0;
+    Node::set_x_coord(x);
+    Node::set_y_coord(y);
+    Node::set_cost(cost);
+    this->type = LeeNode::NONE;
+    this->detour = 0;
     LeeNode::wave = 0;
     LeeNode::output = 0;
 }
 
-LeeNode::LeeNode(Point x) {
-    Node::Node(x.x, x.y);
-    LeeNode::type = LeeNode::NONE;
-    LeeNode::detour = 0;
-    LeeNode::wave = 0;
-    LeeNode::output = 0;
+LeeNode::LeeNode(Point p, int cost) {
+    Node::set_coord(p);
+    Node::set_cost(cost);
+    this->type = LeeNode::NONE;
+    this->detour = 0;
+    this->wave = 0;
+    this->output = 0;
 }
 
 LeeNode::~LeeNode() {
+    //TODO: Figure out why this errors out!
     //claim("LeeNode: We aren't removing nodes in our map!", kWarning);
     //Utilities::Node::~Node();
 }

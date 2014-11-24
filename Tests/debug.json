@@ -5,10 +5,10 @@
   "width": 20,
 
   "blockerList": [
-    {"name": "blocker1", "width": 10, "height": 10, "x": 5, "y": 5}
+    {"name": "blocker1", "width": 10, "height": 10, "x": 4, "y": 4}
   ],
 
   "routeList": [
-    {"name": "route1", "source_x": 9, "source_y": 9, "sink_x": 20, "sink_y": 0}
+    {"name": "route1", "source_x": 0, "source_y": 19, "sink_x": 19, "sink_y": 0}
   ]
 }

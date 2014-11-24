@@ -22,7 +22,7 @@ namespace Lee {
         LeeBase &set_map(Map *);
 
         virtual void start();
-        virtual void start(Connection);
+        virtual void start(Route);
 
         // Make sure child classes can get access to these!
     protected:

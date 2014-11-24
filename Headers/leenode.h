@@ -16,8 +16,9 @@ namespace Lee {
             BLOCKED, SINK, SOURCE, NONE, TRACEBACK
         };
 
+        LeeNode();
         LeeNode(int, int, int = 0);
-        LeeNode(Point);
+        LeeNode(Point, int = 0);
 
         ~LeeNode();
 

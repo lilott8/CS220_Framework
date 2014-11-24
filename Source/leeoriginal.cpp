@@ -14,8 +14,8 @@ LeeOriginal::LeeOriginal(Map *m) {
     LeeBase::kMap = m;
 }
 
-void LeeOriginal::start(Connection c) {
-    LeeBase::start(c);
+void LeeOriginal::start(Route r) {
+    LeeBase::start(r);
 
     kWaveFront.push_front(kSource);
 
@@ -40,7 +40,7 @@ int LeeOriginal::solve_recursive(int iteration) {
     claim("Curr Coordinates: " + to_string(curr.get_x()) + ", " + to_string(curr.get_y()), kNote);
 
     // Base case 2: We found the sink
-    if (is_sink(curr) || kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() == LeeNode::NodeType::SINK) {
+    if (is_sink(curr)){//} || kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() == LeeNode::NodeType::SINK) {
         // add the sink to the trace_back
         kTraceBack.push_back(curr);
         claim("Figure out how to add a point to a node", kWarning);
@@ -128,6 +128,8 @@ LeeNode LeeOriginal::calculate_metric(LeeNode a, int i) {
     // traceback we save the values
     temp.set_cost(LeeBase::calculate_lees_distance(a));
     temp.set_output(LeeBase::calculate_lees_distance(a));
+
+    claim(temp.to_string(), kWarning);
 
     // Mutate the node's data on the map
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())
