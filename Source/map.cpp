@@ -63,7 +63,22 @@ Map Map::set_blockages(vector<Blocker> b) {
 
 Map Map::set_sources_and_sinks(vector<Connection> v) {
     for(int x = 0;x < v.size();x++) {
+        Connection c = v.at(x);
+        // Declare the source(s)
+        LeeNode temp = LeeNode(c.source);
+        temp.set_type(LeeNode::NodeType::SOURCE);
+        claim("Source: " + temp.to_string(), kWarning);
+        kSources.push_front(temp);
+        kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SOURCE);
+        // Declare the sink(s)
+        temp = LeeNode(c.sink.x, c.sink.y);
+        temp.set_type(LeeNode::NodeType::SINK);
+        claim("Sink: " + temp.to_string(), kWarning);
+        kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SINK);
+        kSinks.push_front(temp);
+        // Add our connections
         kConnections.push_back(v.at(x));
+        claim("Connection: " + connection_to_string(v.at(x)), kWarning);
     }
     return *this;
 }
@@ -101,10 +116,9 @@ string Map::connection_to_string(Connection c) {
                 + ", " + to_string(c.source.y) + "\n";
         output += "Sink: " + to_string(c.sink.x)
                 + ", " + to_string(c.sink.y) + "\n";
-        output += "=========================\n";
+        output += "=========================";
 
     return output;
-    //claim(output, kDebug);
 }
 
 /**
@@ -140,8 +154,6 @@ vector< vector<LeeNode*> > *Map::get_map() {
 
 void Map::print_map() {
     string output = "";
-    vector< vector<LeeNode*> >::iterator row;
-    vector<LeeNode*>::iterator column;
     for(int y = 0; y < kHeight; y++) {
         for(int x = 0; x < kWidth; x++) {
             output += LeeNode::convert_type_to_string(kMap.at(x).at(y)->get_type()) + "\t";

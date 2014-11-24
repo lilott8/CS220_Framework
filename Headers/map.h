@@ -40,8 +40,8 @@ private:
     // Variables
     vector<vector<LeeNode*> > kMap;
     deque<Connection> kConnections;
-    deque<LeeNode*> kSources;
-    deque<LeeNode*> kSinks;
+    deque<LeeNode> kSources;
+    deque<LeeNode> kSinks;
     deque<Path> kPaths;
     int kDefaultSize = 10;
     int kHeight;

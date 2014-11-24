@@ -32,7 +32,9 @@ void LeeBase::start(Connection c) {
     claim("Name of Connection: " + c.name, kNote);
     kSink = LeeNode(c.sink.x, c.sink.y);
     kSource = LeeNode(c.source.x, c.source.y);
-    kMap->get_map()->at(c.sink.x).at(c.sink.y)->set_type(LeeNode::NodeType::SINK);
+    claim("Source: " + kSource.to_string(), kDebug);
+
+    //kMap->get_map()->at(c.sink.x).at(c.sink.y)->set_type(LeeNode::NodeType::SINK);
     kMap->get_map()->at(c.source.x).at(c.source.y)->set_type(LeeNode::NodeType::SOURCE);
 
     claim("We are starting to run our algorithm", kDebug);
@@ -103,16 +105,17 @@ int LeeBase::calculate_lees_distance(LeeNode c) {
         answer.push_back(kMap->get_map()
                  ->at(c.get_x() - 1).at(c.get_y())->get_cost());
     }
-    printf("Our options are:\n");
+    claim("Our options are:", kDebug);
     int new_low = 0;
     for (int x = 0; x < answer.size(); x++) {
         if (answer.at(x) >= 1 && answer.at(x) > new_low) {
-            printf("Changing new_low from: %d to %d\n", new_low, answer.at(x));
+            claim("Changing new_low from: " + to_string(new_low) + " to "
+                    + to_string(answer.at(x)), kDebug);
             new_low = answer.at(x);
         }
-        printf("%d: %d\n", x, answer.at(x));
+        claim(to_string(x) + ": " + to_string(answer.at(x)), kDebug);
     }
-    printf("Done with options\n");
+    claim("Done with options", kDebug);
     //return min_element(begin(answer), end(answer)) + 1;
     return new_low + 1;
 }

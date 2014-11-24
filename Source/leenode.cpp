@@ -1,6 +1,7 @@
 #include <node.h>
 #include <string>
 #include <leenode.h>
+#include <claim.h>
 
 using namespace Utilities;
 using namespace std;
@@ -9,10 +10,22 @@ using namespace Lee;
 LeeNode::LeeNode(int x, int y, int cost) {
     Node::Node(x, y, cost);
     LeeNode::type = LeeNode::NONE;
+    LeeNode::detour = 0;
+    LeeNode::wave = 0;
+    LeeNode::output = 0;
+}
+
+LeeNode::LeeNode(Point x) {
+    Node::Node(x.x, x.y);
+    LeeNode::type = LeeNode::NONE;
+    LeeNode::detour = 0;
+    LeeNode::wave = 0;
+    LeeNode::output = 0;
 }
 
 LeeNode::~LeeNode() {
-    Utilities::Node::~Node();
+    //claim("LeeNode: We aren't removing nodes in our map!", kWarning);
+    //Utilities::Node::~Node();
 }
 
 void LeeNode::set_type(NodeType t) {
@@ -66,4 +79,14 @@ void LeeNode::set_wave(int w) {
 }
 void LeeNode::set_output(int o) {
     output = o;
+}
+
+string LeeNode::to_string() {
+    string output = "Coords: (" + std::to_string(this->get_x()) + ", "
+            + std::to_string(this->get_y()) + ")\tCost: " + std::to_string(this->get_cost())
+            + "\tType: " + convert_type_to_string(this->get_type())
+    + "\tDetour: " + std::to_string(this->get_detour()) + "\tWave: " + std::to_string(this->get_wave())
+    + "\tOutput: " + std::to_string(this->get_output());
+
+    return output;
 }

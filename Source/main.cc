@@ -77,11 +77,11 @@ int main(int argc,char* argv[]) {
     Connection work;
     while(map.get_connections_size() > 0) {
         work = map.get_next_connection();
-        claim("Working on a new connection: " + map.connection_to_string(work), kNote);
-        algorithm.start(work);
+        //claim("Working on a new connection: " + map.connection_to_string(work), kNote);
+        //algorithm.start(work);
     }
 
-    map.print_map();
+    //map.print_map();
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
 	//Utilities::Grid g(first_problem->get_width(), first_problem->get_height());

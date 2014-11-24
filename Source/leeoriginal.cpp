@@ -15,20 +15,20 @@ LeeOriginal::LeeOriginal(Map *m) {
 }
 
 void LeeOriginal::start(Connection c) {
-    kSource = LeeNode(c.source.x, c.source.y);
-    kSink = LeeNode(c.sink.x, c.sink.y);
+    LeeBase::start(c);
+
+    kWaveFront.push_front(kSource);
 
     solve_recursive(1);
 }
 
 int LeeOriginal::solve_recursive(int iteration) {
-    printf("Queue size: %d\n", kWaveFront.size());
+    claim("Queue size: " + to_string(kWaveFront.size()), kNote);
 
     // Base case 1: Not finding a solution
-    //printf("size of queue: %lu\n", kWaveFront.size());
     if (kWaveFront.size() < 1) {
-        printf("We have nothing in our queue\n");
-        printf("=====================\n\n");
+        claim("We have nothing in our queue", kNote);
+        claim("=====================", kNote);
         return iteration;
     }
 
@@ -37,7 +37,7 @@ int LeeOriginal::solve_recursive(int iteration) {
     // pop off the first record
     kWaveFront.pop_front();
 
-    printf("Curr Coordinates: %d, %d\n", curr.get_x(), curr.get_y());
+    claim("Curr Coordinates: " + to_string(curr.get_x()) + ", " + to_string(curr.get_y()), kNote);
 
     // Base case 2: We found the sink
     if (is_sink(curr) || kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() == LeeNode::NodeType::SINK) {
@@ -57,7 +57,7 @@ int LeeOriginal::solve_recursive(int iteration) {
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFront.push_back(adjacent.at(x));
     }
-    printf("=========================\n");
+    claim("=========================", kNote);
     kMap->print_map();
     solve_recursive(iteration + 1);
 
@@ -81,7 +81,8 @@ vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) 
         if (!is_in_vector(temp)) {
             temp = calculate_metric(temp, iteration);
             results.push_back(temp);
-            printf("Adding (x,y+1): (%d, %d)\n", temp.get_x(), temp.get_y());
+            claim("Adding (x,y+1): (" + to_string(temp.get_x())
+                    + ", " + to_string(temp.get_y()), kDebug);
         }
     }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x(), c.get_y() + 1);}
     // (x, y-1)
@@ -91,7 +92,8 @@ vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) 
         if (!is_in_vector(temp)) {
             temp = calculate_metric(temp, iteration);
             results.push_back(temp);
-            printf("Adding (x,y-1): (%d, %d)\n", temp.get_x(), temp.get_y());
+            claim("Adding (x,y-1): (" + to_string(temp.get_x())
+                    + ", " + to_string(temp.get_y()), kDebug);
         }
     }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x(), c.get_y() - 1);}
     // (x+1, y)
@@ -101,7 +103,8 @@ vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) 
         if (!is_in_vector(temp)) {
             temp = calculate_metric(temp, iteration);
             results.push_back(temp);
-            printf("Adding (x+1,y): (%d, %d)\n", temp.get_x(), temp.get_y());
+            claim("Adding (x+1,y): (" + to_string(temp.get_x())
+                    + ", " + to_string(temp.get_y()), kDebug);
         }
     }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x() + 1, c.get_y());}
     // (x-1, y)
@@ -111,7 +114,8 @@ vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) 
         if (!is_in_vector(temp)) {
             temp = calculate_metric(temp, iteration);
             results.push_back(temp);
-            printf("Adding (x-1,y): (%d, %d)\n", temp.get_x(), temp.get_y());
+            claim("Adding (x-1,y): (" + to_string(temp.get_x())
+                    + ", " + to_string(temp.get_y()), kDebug);
         }
     }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x() - 1, c.get_y());}
     return results;

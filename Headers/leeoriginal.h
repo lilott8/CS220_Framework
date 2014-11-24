@@ -17,7 +17,5 @@ namespace Lee {
 
         LeeNode calculate_metric(LeeNode, int);
     };
-
-
 }
 #endif //_LEEORIGINAL_H_
