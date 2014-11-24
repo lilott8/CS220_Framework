@@ -13,11 +13,6 @@ using namespace std;
 using namespace Utilities;
 using namespace Lee;
 
-struct Coordinates {
-    int x;
-    int y;
-};
-
 class Map {
 public:
     // Constructors
@@ -32,18 +27,22 @@ public:
     Map set_blockages(vector<Blocker>);
     Map set_sources_and_sinks(vector<Connection>);
     void print_map();
+    void print_connections();
+    Connection get_next_connection();
+    int get_connections_size();
+    string connection_to_string(Connection);
     void add_sinks(vector<LeeNode*>);
     void add_sources(vector<LeeNode*>);
 
-    // Variables
 private:
     // Methods
     void initialize_map(int, int);
     // Variables
     vector<vector<LeeNode*> > kMap;
-    vector<LeeNode*> kSources;
-    vector<LeeNode*> kSinks;
-    vector<Path> kPaths;
+    deque<Connection> kConnections;
+    deque<LeeNode*> kSources;
+    deque<LeeNode*> kSinks;
+    deque<Path> kPaths;
     int kDefaultSize = 10;
     int kHeight;
     int kWidth;

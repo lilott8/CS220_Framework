@@ -7,6 +7,7 @@
 
 using namespace std;
 using namespace Utilities;
+using namespace Lee;
 
 /**
 * Call init map with defaults
@@ -33,15 +34,15 @@ Map Map::set_blockages(vector<Blocker> b) {
     int height;
     int width;
     Point start;
-    claim("Attempting to place blockages", kNote);
+    claim("Placing blockages", kNote);
     for(int x = 0;x < (int)b.size();x++) {
-        claim("blocker details:", kNote);
+        /*claim("blocker details:", kNote);
         claim("blocker name: " + b.at(x).name, kNote);
         claim("blocker start coords: " + to_string(b.at(x).location.x) +
                 ", " + to_string(b.at(x).location.y), kNote);
         claim("blocker height, width: " + to_string(b.at(x).height) +
                 ", " + to_string(b.at(x).width), kNote);
-        claim("*************************", kNote);
+        claim("*************************", kNote);*/
         height = b.at(x).height;
         width = b.at(x).width;
         start = b.at(x).location;
@@ -61,8 +62,49 @@ Map Map::set_blockages(vector<Blocker> b) {
 }
 
 Map Map::set_sources_and_sinks(vector<Connection> v) {
-    claim("Map::set_sources_and_sinks is probably a deprecated method...", kWarning);
+    for(int x = 0;x < v.size();x++) {
+        kConnections.push_back(v.at(x));
+    }
     return *this;
+}
+
+Connection Map::get_next_connection() {
+    if (kConnections.size() > 0) {
+        Connection c = kConnections.front();
+        kConnections.pop_front();
+        return c;
+    } else {
+        return Connection();
+    }
+}
+
+int Map::get_connections_size() {
+    return (int) kConnections.size();
+}
+
+void Map::print_connections() {
+    string output = "\n";
+    for(int x = 0; x < kConnections.size(); x++) {
+        output += "Source: " + to_string(kConnections.at(x).source.x)
+                + ", " + to_string(kConnections.at(x).source.y) + "\n";
+        output += "Sink: " + to_string(kConnections.at(x).sink.x)
+                + ", " + to_string(kConnections.at(x).sink.y) + "\n";
+        output += "=========================\n";
+    }
+
+    claim(output, kDebug);
+}
+
+string Map::connection_to_string(Connection c) {
+    string output = "\n";
+        output += "Source: " + to_string(c.source.x)
+                + ", " + to_string(c.source.y) + "\n";
+        output += "Sink: " + to_string(c.sink.x)
+                + ", " + to_string(c.sink.y) + "\n";
+        output += "=========================\n";
+
+    return output;
+    //claim(output, kDebug);
 }
 
 /**
@@ -102,7 +144,6 @@ void Map::print_map() {
     vector<LeeNode*>::iterator column;
     for(int y = 0; y < kHeight; y++) {
         for(int x = 0; x < kWidth; x++) {
-
             output += LeeNode::convert_type_to_string(kMap.at(x).at(y)->get_type()) + "\t";
         }
         output += "\n";

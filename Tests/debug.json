@@ -1,5 +1,5 @@
 {
-  "file_name": "test_sample",
+  "file_name": "debug",
 
   "height": 20,
   "width": 20,
@@ -9,6 +9,6 @@
   ],
 
   "routeList": [
-    {"name": "route1", "source_x": 10, "source_y": 10, "sink_x": 20, "sink_y": 0}
+    {"name": "route1", "source_x": 9, "source_y": 9, "sink_x": 20, "sink_y": 0}
   ]
 }

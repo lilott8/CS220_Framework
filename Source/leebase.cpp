@@ -9,13 +9,10 @@ using namespace Utilities;
 using namespace std;
 
 Map *kMap;
-Node kSink;
-Node kSource;
-deque<Node> kWaveFront;
-vector<Node> kTraceBack;
+deque<LeeNode> kWaveFront;
+vector<LeeNode> kTraceBack;
 
 LeeBase::LeeBase() {
-
 }
 
 LeeBase::~LeeBase() {
@@ -33,8 +30,10 @@ LeeBase &LeeBase::set_map(Map *m) {
 
 void LeeBase::start(Connection c) {
     claim("Name of Connection: " + c.name, kNote);
-    kSink = c.sink;
-    kSource = c.source;
+    kSink = LeeNode(c.sink.x, c.sink.y);
+    kSource = LeeNode(c.source.x, c.source.y);
+    kMap->get_map()->at(c.sink.x).at(c.sink.y)->set_type(LeeNode::NodeType::SINK);
+    kMap->get_map()->at(c.source.x).at(c.source.y)->set_type(LeeNode::NodeType::SOURCE);
 
     claim("We are starting to run our algorithm", kDebug);
 }
@@ -50,30 +49,30 @@ void LeeBase::start() {
     //printf("Starting to run our algorithm\n");
 }
 
-bool LeeBase::is_sink(Node c) {
-    return c.get_x() == kSink.x && c.get_y() == kSink.y;
+bool LeeBase::is_sink(LeeNode c) {
+    return c.get_x() == kSink.get_x() && c.get_y() == kSink.get_y();
 }
 
 bool LeeBase::is_sink(int x, int y) {
-    return kSink.x == x && kSink.y == y;
+    return kSink.get_x() == x && kSink.get_y() == y;
 }
 
-bool LeeBase::is_source(Node c) {
-    return c.get_x() == kSource.x && c.get_y() == kSource.y;
+bool LeeBase::is_source(LeeNode c) {
+    return c.get_x() == kSource.get_x() && c.get_y() == kSource.get_y();
 }
 
 bool LeeBase::is_source(int x, int y) {
-    return kSource.x == x && kSource.y == y;
+    return kSource.get_x() == x && kSource.get_y() == y;
 }
 
-int LeeBase::calculate_manhattan_distance(Node a, Node b) {
+int LeeBase::calculate_manhattan_distance(LeeNode a, LeeNode b) {
     int order1, order2;
     order1 = abs(a.get_x() - b.get_x());
     order2 = abs(a.get_y() - b.get_y());
     return order1 + order2;
 }
 
-double LeeBase::calculate_euclidean_distance(Node a, Node b) {
+double LeeBase::calculate_euclidean_distance(LeeNode a, LeeNode b) {
     int order1, order2;
     order1 = (a.get_x() - b.get_x()) * (a.get_x() - b.get_x());
     order2 = (a.get_y() - b.get_y()) * (a.get_y() - b.get_y());
@@ -81,7 +80,7 @@ double LeeBase::calculate_euclidean_distance(Node a, Node b) {
     return (sqrt(order1 + order2) + .5);
 }
 
-int LeeBase::calculate_lees_distance(Node c) {
+int LeeBase::calculate_lees_distance(LeeNode c) {
     // take care of our seed case
     vector<int> answer;
     // (x, y+1)
@@ -118,7 +117,7 @@ int LeeBase::calculate_lees_distance(Node c) {
     return new_low + 1;
 }
 
-bool LeeBase::is_adjacent(Node a, Node b) {
+bool LeeBase::is_adjacent(LeeNode a, LeeNode b) {
     if (a.get_cost() == 0) {
         return true;
     }
@@ -143,7 +142,7 @@ bool LeeBase::is_adjacent(Node a, Node b) {
     return result <= 1 && (delta_x == 1 || delta_y == 1);
 }
 
-bool LeeBase::is_placeable(Node c) {
+bool LeeBase::is_placeable(LeeNode c) {
     // Order matters here!
     if (c.get_x() > kMap->get_map()->size() - 1 || c.get_x() < 0) {
         return false;
@@ -182,11 +181,11 @@ bool LeeBase::is_in_bounds(int x, int y) {
             (y < kMap->get_map()->at(x).size() && y >= 0);
 }
 
-bool LeeBase::is_adjacent_to_source(Node c) {
+bool LeeBase::is_adjacent_to_source(LeeNode c) {
     return calculate_manhattan_distance(c, kSource) == 1;
 }
 
-bool LeeBase::is_in_vector(Node c) {
+bool LeeBase::is_in_vector(LeeNode c) {
     for (int x = 0; x < kWaveFront.size(); x++) {
         if (kWaveFront.at(x).get_x() == c.get_x() &&
                 kWaveFront.at(x).get_y() == c.get_y()) {
@@ -196,6 +195,6 @@ bool LeeBase::is_in_vector(Node c) {
     return false;
 }
 
-bool LeeBase::is_same_coordinate(Node a, Node b) {
+bool LeeBase::is_same_coordinate(LeeNode a, LeeNode b) {
     return (a.get_x() == b.get_x()) && (a.get_y() == b.get_y());
 }

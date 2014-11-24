@@ -39,6 +39,31 @@ string LeeNode::convert_type_to_string(NodeType t) {
         case SOURCE:
             s = "s";
             break;
+        case TRACEBACK:
+            s = "r";
+            break;
     }
     return s;
+}
+
+int LeeNode::get_detour() {
+    return detour;
+}
+
+int LeeNode::get_wave() {
+    return wave;
+}
+
+int LeeNode::get_output() {
+    return output;
+}
+
+void LeeNode::set_detour(int d) {
+    detour = d;
+}
+void LeeNode::set_wave(int w) {
+    wave = w;
+}
+void LeeNode::set_output(int o) {
+    output = o;
 }

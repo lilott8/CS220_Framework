@@ -6,7 +6,7 @@
 #include <queue>
 #include <deque>
 #include "map.h"
-#include "node.h"
+#include "LeeNode.h"
 
 using namespace Utilities;
 
@@ -21,48 +21,49 @@ namespace Lee {
 
         LeeBase &set_map(Map *);
 
-        virtual void start() =0;
-        virtual void start(Connection) =0;
+        virtual void start();
+        virtual void start(Connection);
 
         // Make sure child classes can get access to these!
     protected:
-        Point kSink;
-        Point kSource;
+        // appease the compiler...
+        LeeNode kSink = LeeNode(-1, -1);
+        LeeNode kSource = LeeNode(-1, -1);
         Map *kMap;
-        deque <Node> kWaveFront;
-        vector <Node> kTraceBack;
+        deque <LeeNode> kWaveFront;
+        vector <LeeNode> kTraceBack;
 
         int calculate_manhattan_distance(int, int);
 
-        int calculate_manhattan_distance(Node, Node);
+        int calculate_manhattan_distance(LeeNode, LeeNode);
 
-        int calculate_lees_distance(Node);
+        int calculate_lees_distance(LeeNode);
 
         int caclulate_euclidean_distance(int, int);
 
-        double calculate_euclidean_distance(Node, Node);
+        double calculate_euclidean_distance(LeeNode, LeeNode);
 
-        bool is_sink(Node);
+        bool is_sink(LeeNode);
 
         bool is_sink(int, int);
 
-        bool is_source(Node);
+        bool is_source(LeeNode);
 
         bool is_source(int, int);
 
-        bool is_adjacent(Node, Node);
+        bool is_adjacent(LeeNode, LeeNode);
 
         bool is_placeable(int x, int y);
 
-        bool is_placeable(Node);
+        bool is_placeable(LeeNode);
 
-        bool is_adjacent_to_source(Node);
+        bool is_adjacent_to_source(LeeNode);
 
-        bool is_in_vector(Node);
+        bool is_in_vector(LeeNode);
 
         bool is_in_bounds(int, int);
 
-        bool is_same_coordinate(Node, Node);
+        bool is_same_coordinate(LeeNode, LeeNode);
     };
 }
 #endif //_LEEBASE_H_

@@ -3,6 +3,8 @@
 #include "../Headers/problem_object.h"
 #include <map.h>
 #include <claim.h>
+#include <leebase.h>
+#include <leeoriginal.h>
 
 using std::cerr;
 using std::cout;
@@ -37,46 +39,53 @@ int main(int argc,char* argv[]) {
     bool intersections = false;
     Algorithm a_type = LEE;
     string file = "../Tests/debug.json";
+    LeeOriginal algorithm = LeeOriginal();
 
     switch (argc) {
         case 7:
-            claim("We have 7 args", kNote);
+            //claim("We have 7 args", kNote);
         case 6:
-            claim("We have 6 args", kNote);
-            claim("Setting korn modifier", kDebug);
+            //claim("We have 6 args", kNote);
+            //claim("Setting korn modifier", kDebug);
             korn_modifier = atof(argv[5]);
         case 5:
-            claim("We have 5 args", kNote);
-            claim("Setting intersection capability", kDebug);
+            //claim("We have 5 args", kNote);
+            //claim("Setting intersection capability", kDebug);
             intersections = (argv[4]=="1") ? true : false;
         case 4:
-            claim("We have 4 args", kNote);
-            claim("Setting bi-directional capability", kDebug);
+            //claim("We have 4 args", kNote);
+            //claim("Setting bi-directional capability", kDebug);
             bi_directional = (argv[3]=="1") ? true : false;
         case 3:
-            claim("We have 3 args", kNote);
-            claim("Setting algorithm type", kDebug);
+            //claim("We have 3 args", kNote);
+            //claim("Setting algorithm type", kDebug);
             a_type = resolve_algorithm(argv[2]);
         case 2:
         default:
-            claim("We have 2 args", kNote);
-            claim("Setting the file", kDebug);
+            //claim("We have 2 args", kNote);
+            //claim("Setting the file", kDebug);
             file = argv[1];
             break;
     }
+    claim("Working on problem: " + first_problem->get_name(), kNote);
     Map map = Map(first_problem->get_width(), first_problem->get_height());
-    map.set_blockages(first_problem->get_blockers())
-            .set_sources_and_sinks(first_problem->get_connections());
+    map.set_blockages(first_problem->get_blockers());
+    map.set_sources_and_sinks(first_problem->get_connections());
+    // Set the map of our algorithm
+    algorithm.set_map(&map);
+
+    Connection work;
+    while(map.get_connections_size() > 0) {
+        work = map.get_next_connection();
+        claim("Working on a new connection: " + map.connection_to_string(work), kNote);
+        algorithm.start(work);
+    }
+
     map.print_map();
 
-
-
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
-<<<<<<< HEAD
 	//Utilities::Grid g(first_problem->get_width(), first_problem->get_height());
-=======
-	Utilities::Grid g(first_problem);
->>>>>>> fef2a7707a850efc764988de2c63f195f6cae648
+	//Utilities::Grid g(first_problem);
 
 	/*
 	Note: we do not take into account the connections or blockers that exist in the Project Object
@@ -92,7 +101,6 @@ int main(int argc,char* argv[]) {
 	Path: a series of straight line segments, with a single source and a single sink
 	Netlist: a series of stright line segments, with a single source and more than one sink
 	*/
-<<<<<<< HEAD
 
 	//Note, we create random paths just as an example of how to create paths, netlists are created similarly
 	/*vector<Path*> paths;
@@ -115,9 +123,7 @@ int main(int argc,char* argv[]) {
 		paths.push_back(new_path);
 	}
 	cout << "Completed." << endl;
-=======
 	vector<Path*> paths = g.test_algorithm();
->>>>>>> fef2a7707a850efc764988de2c63f195f6cae648
 
 	//Print the paths/netlists that you return from your algorithm
 	for(unsigned i = 0; i < paths.size(); i++) {
@@ -136,19 +142,19 @@ int main(int argc,char* argv[]) {
 
 Algorithm resolve_algorithm(string a) {
     if (a.compare("ruben") == 0) {
-        return RUBEN;
+        //return RUBEN;
     }
     if (a.compare("korn") == 0) {
-        return KORN;
+        //return KORN;
     }
     if (a.compare("hadlock") == 0) {
-        return HADLOCK;
+        //return HADLOCK;
     }
     if (a.compare("lee3bit") == 0) {
-        return LEE3BIT;
+        //return LEE3BIT;
     }
     if (a.compare("lee2bit") == 0) {
-        return LEE2BIT;
+        //return LEE2BIT;
     }
     if (a.compare("lee") == 0) {
         return LEE;

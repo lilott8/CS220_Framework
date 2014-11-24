@@ -11,6 +11,7 @@ problem_object.cc
 map.cpp
 leenode.cpp
 leebase.cpp
+leeoriginal.cpp
 )
 
 add_library(SOURCE_LIB ${LIB_SOURCE})

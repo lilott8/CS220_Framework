@@ -2,13 +2,9 @@
 #include "../Headers/node.h"
 #include "../Headers/claim.h"
 
-<<<<<<< HEAD
 Utilities::Node::Node() {
 
 }
-=======
-#include <iostream>
->>>>>>> fef2a7707a850efc764988de2c63f195f6cae648
 
 Utilities::Node::Node(int x, int y, int cost):coord(x,y){
     this->cost = cost;
@@ -28,6 +24,7 @@ Utilities::Node::~Node() {
             //this->remove_connection(edge_to_remove);
             //Delete edge
             delete edge_to_remove;
+            //claim("We are not deleteing edges...", kError);
         }
     }
 }
@@ -110,7 +107,6 @@ void Utilities::Node::set_cost(int cost) {
 
 //If an edge occurs multiple times in the connection list, all instances will be removed
 void Utilities::Node::remove_connection(Edge* connection) {
-<<<<<<< HEAD
     bool nothing_removed = true;
     /*vector<Edge*>::iterator connections_it = connections.begin();
     for(;connections_it != connections.end(); connections_it++) {
@@ -136,9 +132,6 @@ void Utilities::Node::remove_connection(Edge* connection) {
     if (nothing_removed) {
 
     }
-=======
-      //std::cout << "Removing Connection: (" << connection->get_head()->get_x() << "," << connection->get_head()->get_y() << ") -> (" << connection->get_tail()->get_x() << "," << connection->get_tail()->get_y() << ")" << std::endl;
-      bool nothing_removed = true;
 	  vector<Edge*>::iterator connections_it = connections.begin();
       //for(int i = 0; i < this->connections.size(); i++) {
       for(/* connections_it */;connections_it != connections.end();connections_it++) {
@@ -151,5 +144,4 @@ void Utilities::Node::remove_connection(Edge* connection) {
       if(nothing_removed) {
             //TODO: Add debug warning if it gets here without a delete
       }
->>>>>>> fef2a7707a850efc764988de2c63f195f6cae648
 }

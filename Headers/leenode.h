@@ -13,7 +13,7 @@ namespace Lee {
     class LeeNode : public Node {
     public:
         enum NodeType {
-            BLOCKED, SINK, SOURCE, NONE
+            BLOCKED, SINK, SOURCE, NONE, TRACEBACK
         };
 
         LeeNode(int, int, int = 0);
@@ -24,11 +24,23 @@ namespace Lee {
 
         NodeType get_type();
 
+
         static string convert_type_to_string(LeeNode::NodeType);
+
+        void set_output(int);
+        void set_wave(int);
+        void set_detour(int);
+
+        int get_output();
+        int get_wave();
+        int get_detour();
 
     private:
         // stuff for private
         NodeType type;
+        int output;
+        int wave;
+        int detour;
     };
 }
 
