@@ -81,6 +81,7 @@ int main(int argc,char* argv[]) {
         algorithm.start(work);
     }
 
+    map.zero_map();
     map.print_map();
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)

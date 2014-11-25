@@ -38,6 +38,7 @@ public:
     string connection_to_string(Connection);
     void add_sinks(vector<LeeNode*>);
     void add_sources(vector<LeeNode*>);
+    void zero_map();
 
 private:
     // Methods
