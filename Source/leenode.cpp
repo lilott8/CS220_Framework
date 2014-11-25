@@ -106,3 +106,8 @@ string LeeNode::to_string() {
 
     return output;
 }
+
+string LeeNode::coords_to_string() {
+    return "(" + std::to_string(this->get_x()) + ", "
+    + std::to_string(this->get_y()) + ")";
+}

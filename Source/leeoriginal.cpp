@@ -19,15 +19,23 @@ void LeeOriginal::start(Route r) {
 
     kWaveFront.push_front(kSource);
 
-    solve_recursive(1);
+    if(is_valid()) {
+        Path* p = new Path();
+        p->set_source(kSource.get_coord());
+        p->set_sink(kSink.get_coord());
+        kPathBack.push_back(p);
 
-    string output = "Traceback: \n";
-    for(int x = 0; x < kTraceBack.size();x++) {
-        output += kTraceBack.at(x).to_string() + "\n";
+        solve_recursive(1);
+
+        //string output = "Traceback: \n";
+        for(int x = 0; x < kTraceBack.size();x++) {
+        //    output += kTraceBack.at(x).to_string() + "\n";
+        }
+        //claim(output, kDebug);
+    } else {
+        claim("We cannot route path: " + r.source.coords_to_string()
+                + ", " + r.sink.coords_to_string(), kWarning);
     }
-
-    claim(output, kDebug);
-
 }
 
 int LeeOriginal::solve_recursive(int iteration) {
@@ -35,9 +43,8 @@ int LeeOriginal::solve_recursive(int iteration) {
 
     // Base case 1: Not finding a solution
     if (kWaveFront.size() < 1) {
-        claim("We have nothing in our queue", kNote);
-        kMap->print_map();
-        claim("=====================", kNote);
+        claim("We could not find a solution for: " + kSource.coords_to_string()
+                        + ", " + kSink.coords_to_string(), kWarning);
         return iteration;
     }
 
@@ -52,8 +59,8 @@ int LeeOriginal::solve_recursive(int iteration) {
     if (is_sink(curr)){// || kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() == LeeNode::NodeType::SINK) {
         // add the sink to the trace_back
         kTraceBack.push_back(curr);
-        claim("We found the sink: " + curr.to_string(), kWarning);
-        claim("Figure out how to add a point to a node", kWarning);
+        kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+        claim("We found the sink: " + curr.to_string(), kDebug);
         //kMap->get_map()->at(curr.x).at(curr.y) = kTraceback;
         return iteration;
     }
@@ -76,6 +83,8 @@ int LeeOriginal::solve_recursive(int iteration) {
             && is_adjacent(curr, kTraceBack.back())) {
         kTraceBack.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+        PathSegment* ps = new PathSegment(curr.get_coord(), kTraceBack.at(kTraceBack.size()-2).get_coord());
+        kPathBack.back()->add_segment(ps);
     }
     return iteration;
 }

@@ -70,15 +70,15 @@ Map Map::set_sources_and_sinks(vector<Connection> v) {
         // Declare the source(s)
         LeeNode temp = LeeNode(v.at(x).source);
         temp.set_type(LeeNode::NodeType::SOURCE);
-        claim("Source: " + temp.to_string(), kDebug);
+        //claim("Source: " + temp.to_string(), kDebug);
+        //kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SOURCE);
         route.source = temp;
-        kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SOURCE);
 
         // Declare the sink(s)
         temp = LeeNode(v.at(x).sink);
         temp.set_type(LeeNode::NodeType::SINK);
         //claim("Sink: " + temp.to_string(), kDebug);
-        kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SINK);
+        //kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SINK);
         route.sink = temp;
 
         // Add our connections
@@ -113,14 +113,10 @@ void Map::print_connections() {
     claim(output, kDebug);
 }
 
-string Map::connection_to_string(Connection c) {
+string Map::connection_to_string(Route c) {
     string output = "\n";
-        output += "Source: " + to_string(c.source.x)
-                + ", " + to_string(c.source.y) + "\n";
-        output += "Sink: " + to_string(c.sink.x)
-                + ", " + to_string(c.sink.y) + "\n";
-        output += "=========================";
-
+        output += "Source: " + c.source.to_string() + "\n";
+        output += "Sink: " + c.sink.to_string();
     return output;
 }
 

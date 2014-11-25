@@ -11,6 +11,8 @@ using namespace std;
 Map *kMap;
 deque<LeeNode> kWaveFront;
 vector<LeeNode> kTraceBack;
+vector<Path*> kPathBack;
+bool valid_placement;
 
 LeeBase::LeeBase() {
 }
@@ -29,10 +31,22 @@ LeeBase &LeeBase::set_map(Map *m) {
 }
 
 void LeeBase::start(Route route) {
-    kSink = route.sink;
-    kSource = route.source;
+    if(is_valid_placement(route.source)) {
+        //claim("Source has a valid placement", kDebug);
+        kSink = route.sink;
+        valid_placement = true;
+    } else {
+        valid_placement = false;
+    }
+    if(is_valid_placement(route.sink)) {
+        //claim("Sink has a valid placement", kDebug);
+        kSource = route.source;
+        valid_placement = true;
+    } else {
+        valid_placement = false;
+    }
 
-    claim("We are starting to run our algorithm", kDebug);
+    //claim("We are starting to run our algorithm", kDebug);
 }
 
 void LeeBase::start() {
@@ -179,6 +193,11 @@ bool LeeBase::is_placeable(LeeNode c) {
     return true;
 }
 
+bool LeeBase::is_valid_placement(LeeNode c) {
+    return (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
+            LeeNode::NONE);
+}
+
 bool LeeBase::is_placeable(int x, int y) {
     return is_placeable(LeeNode(x,y));
 }
@@ -204,4 +223,24 @@ bool LeeBase::is_in_vector(LeeNode c) {
 
 bool LeeBase::is_same_coordinate(LeeNode a, LeeNode b) {
     return (a.get_coord() == b.get_coord());
+}
+
+bool LeeBase::is_valid() {
+    return valid_placement;
+}
+
+string LeeBase::get_path_back() {
+    string output = "\n";
+    for(int x =0; x< kPathBack.size();x++) {
+        Path* p = kPathBack.at(x);
+        output += "Route " + to_string(x) + ": ";
+        for(int y = 0; y<p->size(); y++) {
+            output += "(" + to_string(p->at(y)->get_sink().x) + ", "
+                    + to_string(p->at(y)->get_sink().y) + ") -> ("
+                    + to_string(p->at(y)->get_source().x) + ", "
+                    + to_string(p->at(y)->get_source().y) + ")\t|\t";
+        }
+        output += "\n";
+    }
+    return output;
 }

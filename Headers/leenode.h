@@ -29,6 +29,7 @@ namespace Lee {
 
         static string convert_type_to_string(LeeNode::NodeType);
         string to_string();
+        string coords_to_string();
 
         void set_output(int);
         void set_wave(int);

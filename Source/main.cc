@@ -74,14 +74,15 @@ int main(int argc,char* argv[]) {
     // Set the map of our algorithm
     algorithm.set_map(&map);
 
-    Connection work;
     while(map.get_size_of_routes() > 0) {
         Route work = map.get_next_route();
-        //claim("Working on a new connection: " + map.connection_to_string(work), kNote);
+        claim("Working on a new connection: " + map.connection_to_string(work), kNote);
         algorithm.start(work);
+        claim("=========================", kDebug);
+        map.zero_map();
     }
 
-    map.zero_map();
+    claim("PathBack: " + algorithm.get_path_back(), kDebug);
     map.print_map();
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
@@ -104,7 +105,8 @@ int main(int argc,char* argv[]) {
 	*/
 
 	//Note, we create random paths just as an example of how to create paths, netlists are created similarly
-	/*vector<Path*> paths;
+	/*
+	vector<Path*> paths;
 	srand(time(NULL));
 	int number_paths = first_problem->get_connections().size();
 	cout << "Creating " << number_paths << " paths...";
@@ -124,7 +126,7 @@ int main(int argc,char* argv[]) {
 		paths.push_back(new_path);
 	}
 	cout << "Completed." << endl;
-	vector<Path*> paths = g.test_algorithm();
+	//vector<Path*> paths = g.test_algorithm();
 
 	//Print the paths/netlists that you return from your algorithm
 	for(unsigned i = 0; i < paths.size(); i++) {
@@ -135,7 +137,8 @@ int main(int argc,char* argv[]) {
 	}
 
 	paths.clear();
-*/
+	*/
+
 	delete first_problem;
 
 	return 0;

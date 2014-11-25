@@ -35,7 +35,7 @@ public:
     void print_map();
     void print_connections();
     int get_size_of_routes();
-    string connection_to_string(Connection);
+    string connection_to_string(Route);
     void add_sinks(vector<LeeNode*>);
     void add_sources(vector<LeeNode*>);
     void zero_map();

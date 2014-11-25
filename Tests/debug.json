@@ -9,6 +9,8 @@
   ],
 
   "routeList": [
-    {"name": "route1", "source_x": 0, "source_y": 19, "sink_x": 19, "sink_y": 0}
+    {"name": "route1", "source_x": 0, "source_y": 19, "sink_x": 19, "sink_y": 0},
+    {"name": "route2", "source_x": 4, "source_y": 17, "sink_x": 17, "sink_y": 4},
+    {"name": "routeFail1", "source_x": 4, "source_y": 17, "sink_x": 17, "sink_y": 4}
   ]
 }

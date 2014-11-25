@@ -21,17 +21,25 @@ namespace Lee {
 
         LeeBase &set_map(Map *);
 
-        virtual void start();
+        // Make sure child classes can get access to these!
         virtual void start(Route);
 
-        // Make sure child classes can get access to these!
+        virtual void start();
+
+        bool is_valid();
+
+        string get_path_back();
+
     protected:
         // appease the compiler...
         LeeNode kSink = LeeNode(-1, -1);
         LeeNode kSource = LeeNode(-1, -1);
         Map *kMap;
         deque <LeeNode> kWaveFront;
+        vector<Path*> kPathBack;
         vector <LeeNode> kTraceBack;
+
+        bool valid_placement;
 
         int calculate_manhattan_distance(int, int);
 
@@ -64,6 +72,8 @@ namespace Lee {
         bool is_in_bounds(int, int);
 
         bool is_same_coordinate(LeeNode, LeeNode);
+
+        bool is_valid_placement(LeeNode);
     };
 }
 #endif //_LEEBASE_H_
