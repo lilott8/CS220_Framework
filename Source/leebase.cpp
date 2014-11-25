@@ -47,19 +47,23 @@ void LeeBase::start() {
 }
 
 bool LeeBase::is_sink(LeeNode c) {
-    return c.get_x() == kSink.get_x() && c.get_y() == kSink.get_y();
+    return kSink.get_coord() == c.get_coord();
 }
 
 bool LeeBase::is_sink(int x, int y) {
-    return kSink.get_x() == x && kSink.get_y() == y;
+    LeeNode ln = LeeNode();
+    ln.set_coord(x, y);
+    return is_sink(ln);
 }
 
 bool LeeBase::is_source(LeeNode c) {
-    return c.get_x() == kSource.get_x() && c.get_y() == kSource.get_y();
+    return kSource.get_coord() == c.get_coord();
 }
 
 bool LeeBase::is_source(int x, int y) {
-    return kSource.get_x() == x && kSource.get_y() == y;
+    LeeNode ln = LeeNode();
+    ln.set_coord(x, y);
+    return is_source(ln);
 }
 
 int LeeBase::calculate_manhattan_distance(LeeNode a, LeeNode b) {
@@ -100,17 +104,17 @@ int LeeBase::calculate_lees_distance(LeeNode c) {
         answer.push_back(kMap->get_map()
                  ->at(c.get_x() - 1).at(c.get_y())->get_cost());
     }
-    claim("Our options are:", kDebug);
+    //claim("Our options are:", kDebug);
     int new_low = 0;
     for (int x = 0; x < answer.size(); x++) {
         if (answer.at(x) >= 1 && answer.at(x) > new_low) {
-            claim("Changing new_low from: " + to_string(new_low) + " to "
-                    + to_string(answer.at(x)), kDebug);
+            //claim("Changing new_low from: " + to_string(new_low) + " to "
+            //        + to_string(answer.at(x)), kDebug);
             new_low = answer.at(x);
         }
-        claim(to_string(x) + ": " + to_string(answer.at(x)), kDebug);
+        //claim(to_string(x) + ": " + to_string(answer.at(x)), kDebug);
     }
-    claim("Done with options", kDebug);
+    //claim("Done with options", kDebug);
     //return min_element(begin(answer), end(answer)) + 1;
     return new_low + 1;
 }
@@ -148,25 +152,30 @@ bool LeeBase::is_placeable(LeeNode c) {
     if (c.get_y() > kMap->get_map()->at(0).size() - 1 || c.get_y() < 0) {
         return false;
     }
-    /**
-    * TODO: implement the functionality for
-    */
+    // check with the node itself if it's placeable, it knows
+    if(kMap->get_map()->at(c.get_x()).at(c.get_y())->get_output() > 0 ||
+            kMap->get_map()->at(c.get_x()).at(c.get_y())->get_wave() > 0 ||
+            kMap->get_map()->at(c.get_x()).at(c.get_y())->get_detour() > 0 ||
+            kMap->get_map()->at(c.get_x()).at(c.get_y())->get_cost() > 0) {
+        return false;
+    }
     if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
             LeeNode::BLOCKED) {
         return false;
     }
-    if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
+    /*if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
             LeeNode::SINK) {
         return false;
-    }
+    }*/
     if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
             LeeNode::SOURCE) {
         return false;
     }
-    if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() !=
+    // Last case to cover anything we might have missed
+    /*if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() !=
             LeeNode::NONE) {
         return false;
-    }
+    }*/
     return true;
 }
 
@@ -185,8 +194,8 @@ bool LeeBase::is_adjacent_to_source(LeeNode c) {
 
 bool LeeBase::is_in_vector(LeeNode c) {
     for (int x = 0; x < kWaveFront.size(); x++) {
-        if (kWaveFront.at(x).get_x() == c.get_x() &&
-                kWaveFront.at(x).get_y() == c.get_y()) {
+        if (kWaveFront.at(x).get_coord() == c.get_coord()) {
+            //claim("We have " + c.to_string() + " in vector", kDebug);
             return true;
         }
     }
@@ -194,5 +203,5 @@ bool LeeBase::is_in_vector(LeeNode c) {
 }
 
 bool LeeBase::is_same_coordinate(LeeNode a, LeeNode b) {
-    return (a.get_x() == b.get_x()) && (a.get_y() == b.get_y());
+    return (a.get_coord() == b.get_coord());
 }

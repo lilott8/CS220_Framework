@@ -38,6 +38,8 @@ namespace Lee {
         int get_wave();
         int get_detour();
 
+        bool is_placeable();
+
     private:
         // stuff for private
         NodeType type;

@@ -16,8 +16,8 @@ LeeNode::LeeNode(int x, int y, int cost) {
     Node::set_cost(cost);
     this->type = LeeNode::NONE;
     this->detour = 0;
-    LeeNode::wave = 0;
-    LeeNode::output = 0;
+    this->wave = 0;
+    this->output = 0;
 }
 
 LeeNode::LeeNode(Point p, int cost) {
@@ -86,6 +86,15 @@ void LeeNode::set_wave(int w) {
 }
 void LeeNode::set_output(int o) {
     output = o;
+}
+
+bool LeeNode::is_placeable() {
+    if(this->get_output() > 0) return false;
+    if(this->get_cost() > 0) return false;
+    if(this->get_detour() > 0) return false;
+    if(this->get_wave() > 0) return false;
+
+    return true;
 }
 
 string LeeNode::to_string() {

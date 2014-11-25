@@ -161,7 +161,8 @@ void Map::print_map() {
         for(int x = 0; x < kWidth; x++) {
             if(kMap.at(x).at(y)->get_type() == LeeNode::NodeType::BLOCKED ||
                     kMap.at(x).at(y)->get_type() == LeeNode::NodeType::SINK ||
-                    kMap.at(x).at(y)->get_type() == LeeNode::NodeType::SOURCE) {
+                    kMap.at(x).at(y)->get_type() == LeeNode::NodeType::SOURCE ||
+                    kMap.at(x).at(y)->get_type() == LeeNode::NodeType::TRACEBACK) {
                 output += LeeNode::convert_type_to_string(kMap.at(x).at(y)->get_type()) + "\t";
             } else {
                 output += to_string(kMap.at(x).at(y)->get_output()) + "\t";
