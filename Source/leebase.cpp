@@ -13,8 +13,10 @@ deque<LeeNode> kWaveFront;
 vector<LeeNode> kTraceBack;
 vector<Path*> kPathBack;
 bool valid_placement;
+bool intesection_enabled;
 
 LeeBase::LeeBase() {
+    intersection_enabled = false;
 }
 
 LeeBase::~LeeBase() {
@@ -23,6 +25,7 @@ LeeBase::~LeeBase() {
 
 LeeBase::LeeBase(Map *m) {
     kMap = m;
+    intersection_enabled = false;
 }
 
 LeeBase &LeeBase::set_map(Map *m) {
@@ -30,17 +33,23 @@ LeeBase &LeeBase::set_map(Map *m) {
     return *this;
 }
 
+void LeeBase::enable_intersections() {
+    this->intersection_enabled = true;
+}
+
 void LeeBase::start(Route route) {
     if(is_valid_placement(route.source)) {
         //claim("Source has a valid placement", kDebug);
-        kSink = route.sink;
+        kSource = route.source;
+        kMap->get_map()->at(kSource.get_x()).at(kSource.get_y())->set_type(LeeNode::NodeType::SOURCE);
         valid_placement = true;
     } else {
         valid_placement = false;
     }
     if(is_valid_placement(route.sink)) {
         //claim("Sink has a valid placement", kDebug);
-        kSource = route.source;
+        kSink = route.sink;
+        kMap->get_map()->at(kSink.get_x()).at(kSink.get_y())->set_type(LeeNode::NodeType::SINK);
         valid_placement = true;
     } else {
         valid_placement = false;
@@ -49,16 +58,7 @@ void LeeBase::start(Route route) {
     //claim("We are starting to run our algorithm", kDebug);
 }
 
-void LeeBase::start() {
-    //kSink = kMap->get_sink_coordinates();
-    //kSource = kMap->get_source_coordinates();
-    // init the distances
-    //kSink.dist = calculate_manhattan_distance(kSink, kSource);
-    //kSource.dist = 0;
-    //kSource.detour = 0;
-
-    //printf("Starting to run our algorithm\n");
-}
+void LeeBase::start() {/** Not Used **/}
 
 bool LeeBase::is_sink(LeeNode c) {
     return kSink.get_coord() == c.get_coord();
@@ -144,62 +144,88 @@ bool LeeBase::is_adjacent(LeeNode a, LeeNode b) {
     // this will prevent the diagonal jumping
     delta_x = abs(a.get_x() - b.get_x());
     delta_y = abs(a.get_y() - b.get_y());
-    // Just for debugging!
-
-    /*if ((delta_x == 0 && delta_y == 1) || (delta_x == 1 && delta_y == 0)) {
-        printf("Delta_x: %d, Delta_y: %d\n", delta_x, delta_y);
-    } else {
-        printf("Delta_x: %d, Delta_y: %d\n", delta_x, delta_y);
-        printf("it's greater than one!\n");
-    }*/
-
-    //printf("---------------------\n");
-    // make sure the result is 1 or less and the delta on x or y is 1
     return result <= 1 && (delta_x == 1 || delta_y == 1);
 }
 
-bool LeeBase::is_placeable(LeeNode c) {
+
+bool LeeBase::is_placeable_router(LeeNode c) {
+    if(this->intersection_enabled) {
+        return is_placeable_intersection(c.get_x(), c.get_y());
+    } else {
+        return is_placeable_no_intersection(c.get_x(), c.get_y());
+    }
+}
+
+bool LeeBase::is_placeable_router(int x, int y) {
+    if(this->intersection_enabled) {
+        return is_placeable_intersection(x, y);
+    } else {
+        return is_placeable_no_intersection(x, y);
+    }
+}
+
+bool LeeBase::is_placeable_no_intersection(LeeNode c) {
+    return is_placeable_no_intersection(c.get_x(), c.get_y());
+}
+
+bool LeeBase::is_placeable_no_intersection(int x, int y) {
     // Order matters here!
-    if (c.get_x() > kMap->get_map()->size() - 1 || c.get_x() < 0) {
+    if (x > kMap->get_map()->size() - 1 || x < 0) {
         return false;
     }
-    if (c.get_y() > kMap->get_map()->at(0).size() - 1 || c.get_y() < 0) {
+    if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
         return false;
     }
     // check with the node itself if it's placeable, it knows
-    if(kMap->get_map()->at(c.get_x()).at(c.get_y())->get_output() > 0 ||
-            kMap->get_map()->at(c.get_x()).at(c.get_y())->get_wave() > 0 ||
-            kMap->get_map()->at(c.get_x()).at(c.get_y())->get_detour() > 0 ||
-            kMap->get_map()->at(c.get_x()).at(c.get_y())->get_cost() > 0) {
+    if(kMap->get_map()->at(x).at(y)->get_output() > 0 ||
+            kMap->get_map()->at(x).at(y)->get_wave() > 0 ||
+            kMap->get_map()->at(x).at(y)->get_detour() > 0 ||
+            kMap->get_map()->at(x).at(y)->get_cost() > 0) {
         return false;
     }
-    if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
-            LeeNode::BLOCKED) {
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::BLOCKED) {
         return false;
     }
-    /*if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
-            LeeNode::SINK) {
-        return false;
-    }*/
-    if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
-            LeeNode::SOURCE) {
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SOURCE) {
         return false;
     }
-    // Last case to cover anything we might have missed
-    /*if (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() !=
-            LeeNode::NONE) {
+    if(kMap->get_map()->at(x).at(y)->get_type() == LeeNode::TRACEBACK) {
         return false;
-    }*/
+    }
+    return true;
+}
+
+bool LeeBase::is_placeable_intersection(LeeNode c) {
+    return is_placeable_intersection(c.get_x(), c.get_y());
+}
+
+bool LeeBase::is_placeable_intersection(int x, int y) {
+    // Order matters here!
+    if (x > kMap->get_map()->size() - 1 || x < 0) {
+        return false;
+    }
+    if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
+        return false;
+    }
+    // check with the node itself if it's placeable, it knows
+    if(kMap->get_map()->at(x).at(y)->get_output() > 0 ||
+            kMap->get_map()->at(x).at(y)->get_wave() > 0 ||
+            kMap->get_map()->at(x).at(y)->get_detour() > 0 ||
+            kMap->get_map()->at(x).at(y)->get_cost() > 0) {
+        return false;
+    }
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::BLOCKED) {
+        return false;
+    }
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SOURCE) {
+        return false;
+    }
     return true;
 }
 
 bool LeeBase::is_valid_placement(LeeNode c) {
     return (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
             LeeNode::NONE);
-}
-
-bool LeeBase::is_placeable(int x, int y) {
-    return is_placeable(LeeNode(x,y));
 }
 
 bool LeeBase::is_in_bounds(int x, int y) {

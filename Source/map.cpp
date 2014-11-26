@@ -154,12 +154,18 @@ vector< vector<LeeNode*> > *Map::get_map() {
 void Map::zero_map() {
     for(int y = 0; y < kHeight; y++) {
         for(int x = 0; x < kWidth; x++) {
-            if(kMap.at(x).at(y)->get_type() == LeeNode::NodeType::NONE) {
+            //if(kMap.at(x).at(y)->get_type() == LeeNode::NodeType::NONE) {
                 kMap.at(x).at(y)->set_output(0);
                 kMap.at(x).at(y)->set_cost(0);
                 kMap.at(x).at(y)->set_detour(0);
                 kMap.at(x).at(y)->set_wave(0);
-            }
+            //}
+            //if(kMap.at(x).at(y)->get_type() == LeeNode::NodeType::TRACEBACK) {
+            //    kMap.at(x).at(y)->set_output(0);
+            //    kMap.at(x).at(y)->set_cost(0);
+            //    kMap.at(x).at(y)->set_detour(0);
+            //    kMap.at(x).at(y)->set_wave(0);
+            //}
         }
     }
 }

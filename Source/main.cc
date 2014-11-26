@@ -51,11 +51,11 @@ int main(int argc,char* argv[]) {
         case 5:
             //claim("We have 5 args", kNote);
             //claim("Setting intersection capability", kDebug);
-            intersections = (argv[4]=="1") ? true : false;
+            intersections = atoi(argv[4]) == 1 ? true : false;
         case 4:
             //claim("We have 4 args", kNote);
             //claim("Setting bi-directional capability", kDebug);
-            bi_directional = (argv[3]=="1") ? true : false;
+            bi_directional = (atoi(argv[3])==1) ? true : false;
         case 3:
             //claim("We have 3 args", kNote);
             //claim("Setting algorithm type", kDebug);
@@ -67,21 +67,30 @@ int main(int argc,char* argv[]) {
             file = argv[1];
             break;
     }
+    if(intersections) {
+        algorithm.enable_intersections();
+        claim("Enabling intersections", kDebug);
+    }
+
     claim("Working on problem: " + first_problem->get_name(), kNote);
+    // Initializing a new map to project our solution on
     Map map = Map(first_problem->get_width(), first_problem->get_height());
     map.set_blockages(first_problem->get_blockers());
     map.set_sources_and_sinks(first_problem->get_connections());
+
     // Set the map of our algorithm
     algorithm.set_map(&map);
 
     while(map.get_size_of_routes() > 0) {
+        // Get the next route
         Route work = map.get_next_route();
         claim("Working on a new connection: " + map.connection_to_string(work), kNote);
+        // Solve the route
         algorithm.start(work);
         claim("=========================", kDebug);
+        // Clear the map out
         map.zero_map();
     }
-
     claim("PathBack: " + algorithm.get_path_back(), kDebug);
     map.print_map();
 

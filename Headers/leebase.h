@@ -30,6 +30,8 @@ namespace Lee {
 
         string get_path_back();
 
+        void enable_intersections();
+
     protected:
         // appease the compiler...
         LeeNode kSink = LeeNode(-1, -1);
@@ -38,7 +40,7 @@ namespace Lee {
         deque <LeeNode> kWaveFront;
         vector<Path*> kPathBack;
         vector <LeeNode> kTraceBack;
-
+        bool intersection_enabled;
         bool valid_placement;
 
         int calculate_manhattan_distance(int, int);
@@ -61,9 +63,17 @@ namespace Lee {
 
         bool is_adjacent(LeeNode, LeeNode);
 
-        bool is_placeable(int x, int y);
+        bool is_placeable_router(int, int);
 
-        bool is_placeable(LeeNode);
+        bool is_placeable_router(LeeNode);
+
+        bool is_placeable_no_intersection(int, int);
+
+        bool is_placeable_no_intersection(LeeNode);
+
+        bool is_placeable_intersection(LeeNode);
+
+        bool is_placeable_intersection(int, int);
 
         bool is_adjacent_to_source(LeeNode);
 

@@ -17,21 +17,19 @@ LeeOriginal::LeeOriginal(Map *m) {
 void LeeOriginal::start(Route r) {
     LeeBase::start(r);
 
-    kWaveFront.push_front(kSource);
-
     if(is_valid()) {
+        kWaveFront.empty();
+        kTraceBack.empty();
+        kWaveFront.push_front(kSource);
+
         Path* p = new Path();
         p->set_source(kSource.get_coord());
         p->set_sink(kSink.get_coord());
         kPathBack.push_back(p);
 
+        // Solve the problem!
         solve_recursive(1);
 
-        //string output = "Traceback: \n";
-        for(int x = 0; x < kTraceBack.size();x++) {
-        //    output += kTraceBack.at(x).to_string() + "\n";
-        }
-        //claim(output, kDebug);
     } else {
         claim("We cannot route path: " + r.source.coords_to_string()
                 + ", " + r.sink.coords_to_string(), kWarning);
@@ -44,7 +42,7 @@ int LeeOriginal::solve_recursive(int iteration) {
     // Base case 1: Not finding a solution
     if (kWaveFront.size() < 1) {
         claim("We could not find a solution for: " + kSource.coords_to_string()
-                        + ", " + kSink.coords_to_string(), kWarning);
+                + ", " + kSink.coords_to_string(), kWarning);
         return iteration;
     }
 
@@ -53,15 +51,14 @@ int LeeOriginal::solve_recursive(int iteration) {
     // pop off the first record
     kWaveFront.pop_front();
 
-    //claim("Curr Coordinates: " + curr.to_string(), kNote);
+    claim("Curr Coordinates: " + curr.to_string(), kNote);
 
     // Base case 2: We found the sink
-    if (is_sink(curr)){// || kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() == LeeNode::NodeType::SINK) {
+    if (is_sink(curr)) {// || kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() == LeeNode::NodeType::SINK) {
         // add the sink to the trace_back
         kTraceBack.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
         claim("We found the sink: " + curr.to_string(), kDebug);
-        //kMap->get_map()->at(curr.x).at(curr.y) = kTraceback;
         return iteration;
     }
 
@@ -73,9 +70,13 @@ int LeeOriginal::solve_recursive(int iteration) {
 
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFront.push_back(adjacent.at(x));
+        claim("Adding: " + adjacent.at(x).to_string(), kDebug);
     }
-    //kMap->print_map();
-    //claim("=========================", kNote);
+    if (iteration % 10 == 0) {
+        kMap->print_map();
+        claim("=========================", kNote);
+    }
+
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
@@ -94,7 +95,7 @@ vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) 
     LeeNode temp(c.get_x(), c.get_y());
 
     // (x, y+1)
-    if (is_placeable(c.get_x(), c.get_y() + 1)) {
+    if (is_placeable_router(c.get_x(), c.get_y() + 1)) {
         temp.set_x_coord( c.get_x());
         temp.set_y_coord(c.get_y() + 1);
         //if(temp.get_output() < 1) {
@@ -105,7 +106,7 @@ vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) 
         }
     }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x(), c.get_y() + 1);}
     // (x, y-1)
-    if (is_placeable(c.get_x(), c.get_y() - 1)) {
+    if (is_placeable_router(c.get_x(), c.get_y() - 1)) {
         temp.set_x_coord(c.get_x());
         temp.set_y_coord(c.get_y() - 1);
         //if(temp.get_output() < 1) {
@@ -116,7 +117,7 @@ vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) 
         }
     }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x(), c.get_y() - 1);}
     // (x+1, y)
-    if (is_placeable(c.get_x() + 1, c.get_y())) {
+    if (is_placeable_router(c.get_x() + 1, c.get_y())) {
         temp.set_x_coord(c.get_x() + 1);
         temp.set_y_coord(c.get_y());
         //if(temp.get_output() < 1) {
@@ -127,7 +128,7 @@ vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) 
         }
     }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x() + 1, c.get_y());}
     // (x-1, y)
-    if (is_placeable(c.get_x() - 1, c.get_y())) {
+    if (is_placeable_router(c.get_x() - 1, c.get_y())) {
         temp.set_x_coord(c.get_x() - 1);
         temp.set_y_coord(c.get_y());
         //if(temp.get_output() < 1) {
