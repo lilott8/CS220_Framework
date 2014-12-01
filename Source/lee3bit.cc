@@ -1,25 +1,31 @@
+#include <deque>
 #include <leebase.h>
-#include <leeoriginal.h>
 #include <claim.h>
+#include "lee3bit.h"
 
 using namespace Lee;
-using namespace Utilities;
 using namespace std;
+using namespace Utilities;
 
-LeeOriginal::LeeOriginal() {
-
+Lee3Bit::Lee3Bit() {
+    //LeeBase::LeeBase();
 }
 
-LeeOriginal::LeeOriginal(Map *m) {
-    LeeBase::kMap = m;
+Lee3Bit::Lee3Bit(Map *m) {
+    //LeeBase::LeeBase();
+    LeeBase::set_map(m);
 }
 
-LeeOriginal::~LeeOriginal() {}
+Lee3Bit::~Lee3Bit() {
+    //LeeBase::~LeeBase();
+}
 
-void LeeOriginal::start(Route r) {
+void Lee3Bit::start(Route r) {
     LeeBase::start(r);
 
     if(is_valid()) {
+        kWaveFront.empty();
+        kTraceBack.empty();
         kWaveFront.push_front(kSource);
 
         Path* p = new Path();
@@ -29,14 +35,13 @@ void LeeOriginal::start(Route r) {
 
         // Solve the problem!
         solve_recursive(1);
-
     } else {
         claim("We cannot route path: " + r.source.coords_to_string()
                 + ", " + r.sink.coords_to_string(), kWarning);
     }
 }
 
-int LeeOriginal::solve_recursive(int iteration) {
+int Lee3Bit::solve_recursive(int iteration) {
     //claim("Queue size: " + to_string(kWaveFront.size()), kNote);
 
     // Base case 1: Not finding a solution
@@ -72,7 +77,6 @@ int LeeOriginal::solve_recursive(int iteration) {
         kWaveFront.push_back(adjacent.at(x));
         claim("Adding: " + adjacent.at(x).to_string(), kDebug);
     }
-    claim("*************************", kNote);
     if (iteration % 10 == 0) {
         kMap->print_map();
         claim("=========================", kNote);
@@ -81,19 +85,27 @@ int LeeOriginal::solve_recursive(int iteration) {
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
-    if (kTraceBack.size() > 0 && curr.get_cost() <= kTraceBack.back().get_cost()
-            && is_adjacent(curr, kTraceBack.back())) {
-        kTraceBack.push_back(curr);
-        kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
-        PathSegment* ps = new PathSegment(curr.get_coord(), kTraceBack.at(kTraceBack.size()-2).get_coord());
-        kPathBack.back()->add_segment(ps);
+    if (kTraceBack.size() > 0) {
+        if (kTraceBack.back().get_cost() == 1) {
+            // Handle the 3->1 hand off
+            if (curr.get_cost() == 3 && is_adjacent(curr, kTraceBack.back())) {
+                kTraceBack.push_back(curr);
+                kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+            }
+            // Otherwise just decrement as you should
+        } else {
+            if (curr.get_cost() < kTraceBack.back().get_cost() && is_adjacent(curr, kTraceBack.back())) {
+                kTraceBack.push_back(curr);
+                kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+            }
+        }
     }
     return iteration;
 }
 
-vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) {
+vector<LeeNode> Lee3Bit::get_adjacent_coordinates(LeeNode c, int iteration) {
     vector<LeeNode> results;
-    LeeNode temp(c.get_x(), c.get_y());
+    LeeNode temp;
 
     // (x, y+1)
     if (is_placeable_router(c.get_x(), c.get_y() + 1)) {
@@ -142,25 +154,21 @@ vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) 
     return results;
 }
 
-LeeNode LeeOriginal::calculate_metric(LeeNode a, int i) {
+LeeNode Lee3Bit::calculate_metric(LeeNode a, int iteration) {
     LeeNode temp = a;
 
-    // Mutate the internal node, so if we add it to the
-    // traceback we save the values
-    temp.set_cost(LeeBase::calculate_lees_distance(a));
-    temp.set_output(LeeBase::calculate_lees_distance(a));
+    int dist = calculate_lees_distance(a);
 
-    //claim(temp.to_string(), kNote);
-
-    // Mutate the node's data on the map
-    kMap->get_map()->at(temp.get_x()).at(temp.get_y())
-            ->set_cost(LeeBase::calculate_lees_distance(a));
-
-    kMap->get_map()->at(temp.get_x()).at(temp.get_y())
-            ->set_wave(LeeBase::calculate_lees_distance(a));
-
-    kMap->get_map()->at(temp.get_x()).at(temp.get_y())
-            ->set_output(LeeBase::calculate_lees_distance(a));
-
+    if (dist % 3 == 0) {
+        temp.set_cost(3);
+        temp.set_wave(3);
+        temp.set_output(3);
+        temp.set_detour(3);
+    } else {
+        temp.set_cost(dist % 3);
+        temp.set_wave(dist % 3);
+        temp.set_output(dist % 3);
+        temp.set_detour(dist % 3);
+    }
     return temp;
 }

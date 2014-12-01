@@ -1,18 +1,20 @@
-#ifndef _LEEORIGINAL_H_
-#define _LEEORIGINAL_H_
+#ifndef _LEE_3_BIT_H_
+#define _LEE_3_BIT_H_
 
-#include <map.h>
+#include "map.h"
 
 #pragma once
 
+using namespace Utilities;
+
 namespace Lee {
 
-    class LeeOriginal : public LeeBase {
+    class Lee3Bit : public LeeBase {
     public:
         // public
-        LeeOriginal();
-        LeeOriginal(Map*);
-        ~LeeOriginal();
+        Lee3Bit();
+        Lee3Bit(Map*);
+        ~Lee3Bit();
         void start(Route);
     private:
         int solve_recursive(int);
@@ -20,4 +22,4 @@ namespace Lee {
         LeeNode calculate_metric(LeeNode, int);
     };
 }
-#endif //_LEEORIGINAL_H_
+#endif //_LEE_3_BIT_H_

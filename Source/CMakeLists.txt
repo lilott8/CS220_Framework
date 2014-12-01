@@ -12,6 +12,7 @@ map.cpp
 leenode.cc
 leebase.cc
 leeoriginal.cc
+lee3bit.cc
 )
 
 add_library(SOURCE_LIB ${LIB_SOURCE})

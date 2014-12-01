@@ -130,14 +130,14 @@ void Map::initialize_map(int height, int width) {
         vector<LeeNode*> temp_row;
         for(int x = 0; x < width; x++) {
             LeeNode* new_node = new LeeNode(x,y);
-            if (x > 0) {
+            /*if (x > 0) {
                 Edge* west = new Edge(new_node,temp_row.at(temp_row.size()-1));
                 new_node->add_connection(west);
             }
             if (y > 0) {
                 Edge* north = new Edge(new_node,kMap.at(y-1).at(x));
                 new_node->add_connection(north);
-            }
+            }*/
             temp_row.push_back(new_node);
         }
         this->kMap.push_back(temp_row);
@@ -171,8 +171,26 @@ void Map::zero_map() {
 }
 
 void Map::print_map() {
-    string output = "";
+    string output = "\t";
+    for(int x = 0; x < kHeight; x++) {
+        output += to_string(x) + "\t";
+    }
+
+    int size = (int) output.size();
+    output += "\n\t";
+
+    for(int x = 0; x<size;x++) {
+            output += "-";
+    }
+
+    output += "\n";
+
     for(int y = 0; y < kHeight; y++) {
+        if(y < 10) {
+            output += to_string(y) + " |\t";
+        } else {
+            output += to_string(y) + "|\t";
+        }
         for(int x = 0; x < kWidth; x++) {
             if(kMap.at(x).at(y)->get_type() == LeeNode::NodeType::BLOCKED ||
                     kMap.at(x).at(y)->get_type() == LeeNode::NodeType::SINK ||

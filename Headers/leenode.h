@@ -43,10 +43,16 @@ namespace Lee {
 
     private:
         // stuff for private
+        // What is the purpose of this node
         NodeType type;
+        // what is the textual representation of this node
         int output;
+        // Lee's implementation
         int wave;
+        // Hadlock's implementation
         int detour;
+        // Korn's Rueben's implementation
+        // super cost
     };
 }
 

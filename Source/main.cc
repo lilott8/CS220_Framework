@@ -88,6 +88,7 @@ int main(int argc,char* argv[]) {
         // Solve the route
         algorithm.start(work);
         claim("=========================", kDebug);
+        map.print_map();
         // Clear the map out
         map.zero_map();
     }

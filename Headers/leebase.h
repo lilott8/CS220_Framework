@@ -42,6 +42,9 @@ namespace Lee {
         vector <LeeNode> kTraceBack;
         bool intersection_enabled;
         bool valid_placement;
+        int kIntersections;
+
+        void clear_queues();
 
         int calculate_manhattan_distance(int, int);
 

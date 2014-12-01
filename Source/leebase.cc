@@ -8,13 +8,6 @@ using namespace Lee;
 using namespace Utilities;
 using namespace std;
 
-Map *kMap;
-deque<LeeNode> kWaveFront;
-vector<LeeNode> kTraceBack;
-vector<Path*> kPathBack;
-bool valid_placement;
-bool intesection_enabled;
-
 LeeBase::LeeBase() {
     intersection_enabled = false;
 }
@@ -38,6 +31,7 @@ void LeeBase::enable_intersections() {
 }
 
 void LeeBase::start(Route route) {
+    clear_queues();
     if(is_valid_placement(route.source)) {
         //claim("Source has a valid placement", kDebug);
         kSource = route.source;
@@ -269,4 +263,9 @@ string LeeBase::get_path_back() {
         output += "\n";
     }
     return output;
+}
+
+void LeeBase::clear_queues() {
+    this->kTraceBack.clear();
+    this->kWaveFront.clear();
 }
