@@ -17,7 +17,7 @@ namespace Lee {
 
         LeeBase(Map *);
 
-        ~LeeBase();
+        virtual ~LeeBase();
 
         LeeBase &set_map(Map *);
 
@@ -30,7 +30,7 @@ namespace Lee {
 
         string get_path_back();
 
-        void enable_intersections();
+        virtual void enable_intersections();
 
     protected:
         // appease the compiler...
@@ -42,7 +42,6 @@ namespace Lee {
         vector <LeeNode> kTraceBack;
         bool intersection_enabled;
         bool valid_placement;
-        int kIntersections;
 
         void clear_queues();
 

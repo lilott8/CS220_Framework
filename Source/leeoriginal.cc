@@ -51,7 +51,7 @@ int LeeOriginal::solve_recursive(int iteration) {
     // pop off the first record
     kWaveFront.pop_front();
 
-    claim("Curr Coordinates: " + curr.to_string(), kNote);
+    //claim("Curr Coordinates: " + curr.to_string(), kNote);
 
     // Base case 2: We found the sink
     if (is_sink(curr)) {// || kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() == LeeNode::NodeType::SINK) {
@@ -70,13 +70,13 @@ int LeeOriginal::solve_recursive(int iteration) {
 
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFront.push_back(adjacent.at(x));
-        claim("Adding: " + adjacent.at(x).to_string(), kDebug);
+        //claim("Adding: " + adjacent.at(x).to_string(), kDebug);
     }
-    claim("*************************", kNote);
-    if (iteration % 10 == 0) {
+    //claim("*************************", kNote);
+    /*if (iteration % 10 == 0) {
         kMap->print_map();
         claim("=========================", kNote);
-    }
+    }*/
 
     solve_recursive(iteration + 1);
 

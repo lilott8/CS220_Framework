@@ -23,6 +23,8 @@ Lee3Bit::~Lee3Bit() {
 void Lee3Bit::start(Route r) {
     LeeBase::start(r);
 
+    claim("Using 3bit!", kWarning);
+
     if(is_valid()) {
         kWaveFront.empty();
         kTraceBack.empty();
@@ -157,18 +159,27 @@ vector<LeeNode> Lee3Bit::get_adjacent_coordinates(LeeNode c, int iteration) {
 LeeNode Lee3Bit::calculate_metric(LeeNode a, int iteration) {
     LeeNode temp = a;
 
-    int dist = calculate_lees_distance(a);
+    int dist = calculate_manhattan_distance(a, kSink);
 
     if (dist % 3 == 0) {
         temp.set_cost(3);
         temp.set_wave(3);
         temp.set_output(3);
         temp.set_detour(3);
+        kMap->get_map()->at(a.get_x()).at(a.get_y())->set_detour(3);
+        kMap->get_map()->at(a.get_x()).at(a.get_y())->set_wave(3);
+        kMap->get_map()->at(a.get_x()).at(a.get_y())->set_output(3);
+        kMap->get_map()->at(a.get_x()).at(a.get_y())->set_cost(3);
+
     } else {
         temp.set_cost(dist % 3);
         temp.set_wave(dist % 3);
         temp.set_output(dist % 3);
         temp.set_detour(dist % 3);
+        kMap->get_map()->at(a.get_x()).at(a.get_y())->set_detour(dist % 3);
+        kMap->get_map()->at(a.get_x()).at(a.get_y())->set_wave(dist % 3);
+        kMap->get_map()->at(a.get_x()).at(a.get_y())->set_output(dist % 3);
+        kMap->get_map()->at(a.get_x()).at(a.get_y())->set_cost(dist % 3);
     }
     return temp;
 }

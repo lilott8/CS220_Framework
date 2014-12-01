@@ -5,6 +5,7 @@
 #include <claim.h>
 #include <leebase.h>
 #include <leeoriginal.h>
+#include <lee3bit.h>
 
 using std::cerr;
 using std::cout;
@@ -14,7 +15,7 @@ enum Algorithm {
     LEE2BIT, LEE3BIT, KORN, HADLOCK, RUBEN, LEE
 };
 Algorithm resolve_algorithm(string);
-
+unique_ptr<LeeBase> child_factory(Algorithm);
 
 int main(int argc,char* argv[]) {
 
@@ -39,7 +40,6 @@ int main(int argc,char* argv[]) {
     bool intersections = false;
     Algorithm a_type = LEE;
     string file = "../Tests/debug.json";
-    LeeOriginal algorithm = LeeOriginal();
 
     switch (argc) {
         case 7:
@@ -67,8 +67,10 @@ int main(int argc,char* argv[]) {
             file = argv[1];
             break;
     }
+    unique_ptr<LeeBase> algorithm = child_factory(a_type);
+
     if(intersections) {
-        algorithm.enable_intersections();
+        algorithm->enable_intersections();
         claim("Enabling intersections", kDebug);
     }
 
@@ -79,20 +81,20 @@ int main(int argc,char* argv[]) {
     map.set_sources_and_sinks(first_problem->get_connections());
 
     // Set the map of our algorithm
-    algorithm.set_map(&map);
+    algorithm->set_map(&map);
 
     while(map.get_size_of_routes() > 0) {
         // Get the next route
         Route work = map.get_next_route();
         claim("Working on a new connection: " + map.connection_to_string(work), kNote);
         // Solve the route
-        algorithm.start(work);
+        algorithm->start(work);
         claim("=========================", kDebug);
         map.print_map();
         // Clear the map out
         map.zero_map();
     }
-    claim("PathBack: " + algorithm.get_path_back(), kDebug);
+    claim("PathBack: " + algorithm->get_path_back(), kDebug);
     map.print_map();
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
@@ -154,21 +156,29 @@ int main(int argc,char* argv[]) {
 	return 0;
 }
 
+unique_ptr<LeeBase> child_factory(Algorithm a) {
+    switch(a) {
+        case LEE: return unique_ptr<LeeOriginal> (new LeeOriginal());
+        //case LEE2BIT: return unique_ptr<Lee2Bit> (new Lee2Bit());
+        case LEE3BIT: return unique_ptr<Lee3Bit> (new Lee3Bit());
+    }
+}
+
 Algorithm resolve_algorithm(string a) {
     if (a.compare("ruben") == 0) {
-        //return RUBEN;
+        return RUBEN;
     }
     if (a.compare("korn") == 0) {
-        //return KORN;
+        return KORN;
     }
     if (a.compare("hadlock") == 0) {
-        //return HADLOCK;
+        return HADLOCK;
     }
     if (a.compare("lee3bit") == 0) {
-        //return LEE3BIT;
+        return LEE3BIT;
     }
     if (a.compare("lee2bit") == 0) {
-        //return LEE2BIT;
+        return LEE2BIT;
     }
     if (a.compare("lee") == 0) {
         return LEE;

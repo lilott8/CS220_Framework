@@ -31,6 +31,7 @@ void LeeBase::enable_intersections() {
 }
 
 void LeeBase::start(Route route) {
+    // Reset our queues so that previous entries don't show up!
     clear_queues();
     if(is_valid_placement(route.source)) {
         //claim("Source has a valid placement", kDebug);
@@ -269,3 +270,4 @@ void LeeBase::clear_queues() {
     this->kTraceBack.clear();
     this->kWaveFront.clear();
 }
+

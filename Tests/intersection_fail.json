@@ -1,0 +1,23 @@
+{
+  "file_name": "intersection_fail",
+  "height": 20,
+  "width": 20,
+
+  "routeList": [
+    {
+      "name": "route1",
+      "source_x": 0,
+      "source_y": 9,
+      "sink_x": 19,
+      "sink_y": 8
+    },
+
+    {
+      "name" : "route2",
+      "source_x": 0,
+      "source_y": 8,
+      "sink_x": 19,
+      "sink_y": 10
+    }
+  ]
+}
