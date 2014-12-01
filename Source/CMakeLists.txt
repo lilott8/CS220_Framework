@@ -9,9 +9,9 @@ pathsegment.cc
 segmentgroup.cc
 problem_object.cc
 map.cpp
-leenode.cpp
-leebase.cpp
-leeoriginal.cpp
+leenode.cc
+leebase.cc
+leeoriginal.cc
 )
 
 add_library(SOURCE_LIB ${LIB_SOURCE})
