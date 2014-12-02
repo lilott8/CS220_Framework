@@ -9,7 +9,6 @@ using namespace Utilities;
 using namespace std;
 
 LeeBase::LeeBase() {
-    intersection_enabled = false;
 }
 
 LeeBase::~LeeBase() {
@@ -18,7 +17,6 @@ LeeBase::~LeeBase() {
 
 LeeBase::LeeBase(Map *m) {
     kMap = m;
-    intersection_enabled = false;
 }
 
 LeeBase &LeeBase::set_map(Map *m) {
@@ -27,7 +25,7 @@ LeeBase &LeeBase::set_map(Map *m) {
 }
 
 void LeeBase::enable_intersections() {
-    this->intersection_enabled = true;
+    this->kIntersectionEnabled = true;
 }
 
 void LeeBase::start(Route route) {
@@ -37,17 +35,17 @@ void LeeBase::start(Route route) {
         //claim("Source has a valid placement", kDebug);
         kSource = route.source;
         kMap->get_map()->at(kSource.get_x()).at(kSource.get_y())->set_type(LeeNode::NodeType::SOURCE);
-        valid_placement = true;
+        kValidPlacement = true;
     } else {
-        valid_placement = false;
+        kValidPlacement = false;
     }
     if(is_valid_placement(route.sink)) {
         //claim("Sink has a valid placement", kDebug);
         kSink = route.sink;
         kMap->get_map()->at(kSink.get_x()).at(kSink.get_y())->set_type(LeeNode::NodeType::SINK);
-        valid_placement = true;
+        kValidPlacement = true;
     } else {
-        valid_placement = false;
+        kValidPlacement = false;
     }
 
     //claim("We are starting to run our algorithm", kDebug);
@@ -96,22 +94,22 @@ int LeeBase::calculate_lees_distance(LeeNode c) {
     // (x, y+1)
     if (is_in_bounds(c.get_x(), c.get_y() + 1)) {
         answer.push_back(kMap->get_map()
-                ->at(c.get_x()).at(c.get_y() + 1)->get_cost());
+                ->at(c.get_x()).at(c.get_y() + 1)->get_leewave());
     }
     // (x, y-1)
     if (is_in_bounds(c.get_x(), c.get_y() - 1)) {
         answer.push_back(kMap->get_map()
-                ->at(c.get_x()).at(c.get_y() - 1)->get_cost());
+                ->at(c.get_x()).at(c.get_y() - 1)->get_leewave());
     }
     // (x+1, y)
     if (is_in_bounds(c.get_x() + 1, c.get_y())) {
         answer.push_back(kMap->get_map()
-                ->at(c.get_x() + 1).at(c.get_y())->get_cost());
+                ->at(c.get_x() + 1).at(c.get_y())->get_leewave());
     }
     // (x-1, y)
     if (is_in_bounds(c.get_x() - 1, c.get_y())) {
         answer.push_back(kMap->get_map()
-                 ->at(c.get_x() - 1).at(c.get_y())->get_cost());
+                 ->at(c.get_x() - 1).at(c.get_y())->get_leewave());
     }
     //claim("Our options are:", kDebug);
     int new_low = 0;
@@ -144,7 +142,7 @@ bool LeeBase::is_adjacent(LeeNode a, LeeNode b) {
 
 
 bool LeeBase::is_placeable_router(LeeNode c) {
-    if(this->intersection_enabled) {
+    if(this->kIntersectionEnabled) {
         return is_placeable_intersection(c.get_x(), c.get_y());
     } else {
         return is_placeable_no_intersection(c.get_x(), c.get_y());
@@ -152,7 +150,7 @@ bool LeeBase::is_placeable_router(LeeNode c) {
 }
 
 bool LeeBase::is_placeable_router(int x, int y) {
-    if(this->intersection_enabled) {
+    if(this->kIntersectionEnabled) {
         return is_placeable_intersection(x, y);
     } else {
         return is_placeable_no_intersection(x, y);
@@ -172,10 +170,7 @@ bool LeeBase::is_placeable_no_intersection(int x, int y) {
         return false;
     }
     // check with the node itself if it's placeable, it knows
-    if(kMap->get_map()->at(x).at(y)->get_output() > 0 ||
-            kMap->get_map()->at(x).at(y)->get_wave() > 0 ||
-            kMap->get_map()->at(x).at(y)->get_detour() > 0 ||
-            kMap->get_map()->at(x).at(y)->get_cost() > 0) {
+    if(!kMap->get_map()->at(x).at(y)->is_placeable()) {
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::BLOCKED) {
@@ -203,10 +198,7 @@ bool LeeBase::is_placeable_intersection(int x, int y) {
         return false;
     }
     // check with the node itself if it's placeable, it knows
-    if(kMap->get_map()->at(x).at(y)->get_output() > 0 ||
-            kMap->get_map()->at(x).at(y)->get_wave() > 0 ||
-            kMap->get_map()->at(x).at(y)->get_detour() > 0 ||
-            kMap->get_map()->at(x).at(y)->get_cost() > 0) {
+    if(!kMap->get_map()->at(x).at(y)->is_placeable()) {
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::BLOCKED) {
@@ -247,7 +239,7 @@ bool LeeBase::is_same_coordinate(LeeNode a, LeeNode b) {
 }
 
 bool LeeBase::is_valid() {
-    return valid_placement;
+    return kValidPlacement;
 }
 
 string LeeBase::get_path_back() {
@@ -271,3 +263,10 @@ void LeeBase::clear_queues() {
     this->kWaveFront.clear();
 }
 
+void LeeBase::set_korn(double d) {
+    kKornModifier = d;
+}
+
+double LeeBase::get_korn() {
+    return kKornModifier;
+}

@@ -6,6 +6,7 @@
 #include <leebase.h>
 #include <leeoriginal.h>
 #include <lee3bit.h>
+#include <ruben.h>
 
 using std::cerr;
 using std::cout;
@@ -35,7 +36,7 @@ int main(int argc,char* argv[]) {
 
     // Defaults for our variables
     // they get altered in the switch below
-    double korn_modifier = 1.5;
+    double korn_modifier = 1;
     bool bi_directional = false;
     bool intersections = false;
     Algorithm a_type = LEE;
@@ -72,6 +73,10 @@ int main(int argc,char* argv[]) {
     if(intersections) {
         algorithm->enable_intersections();
         claim("Enabling intersections", kDebug);
+    }
+
+    if(a_type == RUBEN || a_type == KORN) {
+        algorithm->set_korn(korn_modifier);
     }
 
     claim("Working on problem: " + first_problem->get_name(), kNote);
@@ -161,6 +166,7 @@ unique_ptr<LeeBase> child_factory(Algorithm a) {
         case LEE: return unique_ptr<LeeOriginal> (new LeeOriginal());
         //case LEE2BIT: return unique_ptr<Lee2Bit> (new Lee2Bit());
         case LEE3BIT: return unique_ptr<Lee3Bit> (new Lee3Bit());
+        case RUBEN: return unique_ptr<Ruben> (new Ruben());
     }
 }
 

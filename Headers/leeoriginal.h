@@ -1,15 +1,14 @@
 #ifndef _LEEORIGINAL_H_
 #define _LEEORIGINAL_H_
 
-#include <map.h>
-
 #pragma once
+
+#include <map.h>
 
 namespace Lee {
 
     class LeeOriginal : public LeeBase {
     public:
-        // public
         LeeOriginal();
         LeeOriginal(Map*);
         ~LeeOriginal();

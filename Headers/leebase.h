@@ -30,7 +30,10 @@ namespace Lee {
 
         string get_path_back();
 
-        virtual void enable_intersections();
+        void enable_intersections();
+
+        void set_korn(double);
+        double get_korn();
 
     protected:
         // appease the compiler...
@@ -40,8 +43,9 @@ namespace Lee {
         deque <LeeNode> kWaveFront;
         vector<Path*> kPathBack;
         vector <LeeNode> kTraceBack;
-        bool intersection_enabled;
-        bool valid_placement;
+        bool kIntersectionEnabled = false;
+        bool kValidPlacement;
+        double kKornModifier = 1;
 
         void clear_queues();
 

@@ -157,8 +157,12 @@ void Map::zero_map() {
             //if(kMap.at(x).at(y)->get_type() == LeeNode::NodeType::NONE) {
                 kMap.at(x).at(y)->set_output(0);
                 kMap.at(x).at(y)->set_cost(0);
-                kMap.at(x).at(y)->set_detour(0);
-                kMap.at(x).at(y)->set_wave(0);
+                kMap.at(x).at(y)->set_leewave(0);
+                kMap.at(x).at(y)->set_lee3bitwave(0);
+                kMap.at(x).at(y)->set_lee2bitwave(0);
+                kMap.at(x).at(y)->set_hadlock(0);
+                kMap.at(x).at(y)->set_korn(0);
+                kMap.at(x).at(y)->set_ruben(0);
             //}
             //if(kMap.at(x).at(y)->get_type() == LeeNode::NodeType::TRACEBACK) {
             //    kMap.at(x).at(y)->set_output(0);

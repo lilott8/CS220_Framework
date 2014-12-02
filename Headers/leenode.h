@@ -32,27 +32,36 @@ namespace Lee {
         string coords_to_string();
 
         void set_output(int);
-        void set_wave(int);
-        void set_detour(int);
+        void set_leewave(int);
+        void set_lee2bitwave(int);
+        void set_lee3bitwave(int);
+        void set_ruben(double);
+        void set_korn(double);
+        void set_hadlock(int);
+
 
         int get_output();
-        int get_wave();
-        int get_detour();
+        int get_leewave();
+        int get_lee2bitwave();
+        int get_lee3bitwave();
+        double get_ruben();
+        double get_korn();
+        int get_hadlock();
 
         bool is_placeable();
 
     private:
         // stuff for private
         // What is the purpose of this node
-        NodeType type;
+        NodeType kType;
         // what is the textual representation of this node
-        int output;
-        // Lee's implementation
-        int wave;
-        // Hadlock's implementation
-        int detour;
-        // Korn's Rueben's implementation
-        // super cost
+        int kOutput;
+        int kLeeWave;
+        int kLee2BitWave;
+        int kLee3BitWave;
+        double kRuben;
+        double kKorn;
+        int kHadlock;
     };
 }
 
