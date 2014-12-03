@@ -28,6 +28,10 @@ void LeeBase::enable_intersections() {
     this->kIntersectionEnabled = true;
 }
 
+void LeeBase::enable_bi_direction() {
+    this->kBiDirectionEnabled = true;
+}
+
 void LeeBase::start(Route route) {
     // Reset our queues so that previous entries don't show up!
     clear_queues();
@@ -225,8 +229,32 @@ bool LeeBase::is_adjacent_to_source(LeeNode c) {
 }
 
 bool LeeBase::is_in_vector(LeeNode c) {
-    for (int x = 0; x < kWaveFront.size(); x++) {
-        if (kWaveFront.at(x).get_coord() == c.get_coord()) {
+    for (int x = 0; x < kWaveFrontSource.size(); x++) {
+        if (kWaveFrontSource.at(x).get_coord() == c.get_coord()) {
+            //claim("We have " + c.to_string() + " in vector", kDebug);
+            return true;
+        }
+    }
+    for (int x = 0; x < kWaveFrontSink.size(); x++) {
+        if (kWaveFrontSink.at(x).get_coord() == c.get_coord()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool LeeBase::is_in_sink_vector(LeeNode c) {
+    for (int x = 0; x < kWaveFrontSink.size(); x++) {
+        if (kWaveFrontSink.at(x).get_coord() == c.get_coord()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool LeeBase::is_in_source_vector(LeeNode c) {
+    for (int x = 0; x < kWaveFrontSource.size(); x++) {
+        if (kWaveFrontSource.at(x).get_coord() == c.get_coord()) {
             //claim("We have " + c.to_string() + " in vector", kDebug);
             return true;
         }
@@ -260,7 +288,8 @@ string LeeBase::get_path_back() {
 
 void LeeBase::clear_queues() {
     this->kTraceBack.clear();
-    this->kWaveFront.clear();
+    this->kWaveFrontSource.clear();
+    this->kWaveFrontSink.clear();
 }
 
 void LeeBase::set_korn(double d) {

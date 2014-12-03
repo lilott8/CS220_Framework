@@ -25,8 +25,6 @@ Ruben::~Ruben() {
 void Ruben::start(Route r) {
     LeeBase::start(r);
 
-    claim("Using Ruben's!", kWarning);
-
     if (is_valid()) {
         LeeBase::clear_queues();
         kWaveFrontPQ = priority_queue<LeeNode, vector<LeeNode>, CompareNodesRuben>();
@@ -38,7 +36,12 @@ void Ruben::start(Route r) {
         kPathBack.push_back(p);
 
         // Solve the problem!
-        solve_recursive(1);
+        if (kBiDirectionEnabled) {
+            kWaveFrontSink.push_front(kSink);
+            solve_recursive_bi_directional(1);
+        } else {
+            solve_recursive(1);
+        }
     } else {
         claim("We cannot route path: " + r.source.coords_to_string()
                 + ", " + r.sink.coords_to_string(), kWarning);
@@ -46,10 +49,13 @@ void Ruben::start(Route r) {
 }
 
 int Ruben::solve_recursive(int iteration) {
-// Base case 1: Not finding a solution
+
     //printf("size of queue: %lu\n", kWaveFront.size());
+    // Base case 1: Not finding a solution
     if (kWaveFrontPQ.size() < 1) {
-        claim("We have nothing in our queue", kDebug);
+        claim("We could not successfully route: "
+                + kSource.coords_to_string() + "->"
+                + kSink.coords_to_string(), kWarning);
         return iteration;
     }
 
@@ -61,7 +67,7 @@ int Ruben::solve_recursive(int iteration) {
     claim("Curr Coordinates: " + curr.to_string(), kNote);
 
     // Base case 2: We found the sink
-    if (is_sink(curr)){// || kMap->get_map()->at(curr.get_x()).at(curr.get_y()) == LeeNode::NodeType::SINK) {
+    if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBack.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
@@ -85,11 +91,15 @@ int Ruben::solve_recursive(int iteration) {
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
-    if (kTraceBack.size() > 0 && curr.get_ruben() >= kTraceBack.back().get_ruben()
+    if (kTraceBack.size() > 0 && curr.get_leewave() <= kTraceBack.back().get_leewave()
             && is_adjacent(curr, kTraceBack.back())) {
         kTraceBack.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
     }
+    return iteration;
+}
+
+int Ruben::solve_recursive_bi_directional(int iteration) {
     return iteration;
 }
 
@@ -153,6 +163,7 @@ LeeNode Ruben::calculate_metric(LeeNode c, int i) {
     
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_leewave(temp.get_leewave());
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_ruben());
+    //kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_leewave());
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_ruben(temp.get_ruben());
     return temp;
 }

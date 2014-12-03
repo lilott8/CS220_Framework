@@ -27,7 +27,7 @@ void Hadlock::start(Route r) {
         kWaveFrontPQ = priority_queue<LeeNode, vector<LeeNode>, CompareNodesHadlock>();
 
         kWaveFrontPQ.push(kSource);
-        kWaveFront.push_back(kSource);
+        kWaveFrontSource.push_back(kSource);
 
         Path *p = new Path();
         p->set_source(kSource.get_coord());
@@ -35,7 +35,12 @@ void Hadlock::start(Route r) {
         kPathBack.push_back(p);
 
         // Solve the problem!
-        solve_recursive(1);
+        if (kBiDirectionEnabled) {
+            kWaveFrontSink.push_front(kSink);
+            solve_recursive_bi_directional(1);
+        } else {
+            solve_recursive(1);
+        }
     } else {
         claim("We cannot route path: " + r.source.coords_to_string()
                 + ", " + r.sink.coords_to_string(), kWarning);
@@ -44,10 +49,12 @@ void Hadlock::start(Route r) {
 
 int Hadlock::solve_recursive(int iteration) {
 
+    //claim("size of queue: " + to_string(kWaveFrontPQ.size()), kDebug);
     // Base case 1: Not finding a solution
-    claim("size of queue: " + to_string(kWaveFrontPQ.size()), kDebug);
     if (kWaveFrontPQ.size() < 1) {
-        claim("We have nothing in our queue", kWarning);
+        claim("We could not successfully route: "
+                + kSource.coords_to_string() + "->"
+                + kSink.coords_to_string(), kWarning);
         return iteration;
     }
 
@@ -60,7 +67,8 @@ int Hadlock::solve_recursive(int iteration) {
     if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBack.push_back(curr);
-        kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+        kMap->get_map()->at(curr.get_x()).at(curr.get_y())
+                ->set_type(LeeNode::NodeType::TRACEBACK);
         claim("We found the sink!", kDebug);
         return iteration;
     }
@@ -75,10 +83,13 @@ int Hadlock::solve_recursive(int iteration) {
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFrontPQ.push(adjacent.at(x));
         // TODO: Figure out how to iterate PQ's
-        kWaveFront.push_back(adjacent.at(x));
+        kWaveFrontSource.push_back(adjacent.at(x));
     }
-    claim("******************************", kDebug);
-    kMap->print_map();
+
+    if (iteration % 10 == 0) {
+        claim("******************************", kDebug);
+        kMap->print_map();
+    }
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
@@ -91,6 +102,10 @@ int Hadlock::solve_recursive(int iteration) {
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
     }
 
+    return iteration;
+}
+
+int Hadlock::solve_recursive_bi_directional(int iteration) {
     return iteration;
 }
 
@@ -109,16 +124,16 @@ vector<LeeNode> Hadlock::get_adjacent_coordinates(LeeNode c) {
             temp.set_cost(LeeBase::calculate_manhattan_distance(temp, kSource));
             if (calculate_euclidean_distance(temp, kSink) <=
                     source_distance) {
-                claim("Temp: " + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ") is closer to sink than our current!", kDebug);
+                //claim("Temp: " + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ") is closer to sink than our current!", kDebug);
                 temp.set_hadlock(c.get_hadlock());
             } else {
-                claim("Temp is not closer to sink", kDebug);
+                //claim("Temp is not closer to sink", kDebug);
                 temp.set_hadlock(c.get_hadlock() + 1);
             }
             kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_hadlock(temp.get_hadlock());
             kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_hadlock());
             results.push_back(temp);
-            claim("Adding (x,y+1): (" + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ")", kDebug);
+            //claim("Adding (x,y+1): (" + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ")", kDebug);
         }
     }
     // (x, y-1)
@@ -129,16 +144,16 @@ vector<LeeNode> Hadlock::get_adjacent_coordinates(LeeNode c) {
             temp.set_cost(calculate_manhattan_distance(temp, kSource));
             if (calculate_euclidean_distance(temp, kSink) <=
                     source_distance) {
-                claim("Temp: " + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ") is closer to sink than our current!", kDebug);
+                //claim("Temp: " + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ") is closer to sink than our current!", kDebug);
                 temp.set_hadlock(c.get_hadlock());
             } else {
-                claim("Temp is not closer to sink", kDebug);
+                //claim("Temp is not closer to sink", kDebug);
                 temp.set_hadlock(c.get_hadlock() + 1);
             }
             kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_hadlock(temp.get_hadlock());
             kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_hadlock());
             results.push_back(temp);
-            claim("Adding (x,y-1): (" + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ")", kDebug);
+            //claim("Adding (x,y-1): (" + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ")", kDebug);
         }
     }
     // (x+1, y)
@@ -149,16 +164,16 @@ vector<LeeNode> Hadlock::get_adjacent_coordinates(LeeNode c) {
             temp.set_cost(calculate_manhattan_distance(temp, kSource));
             if (calculate_euclidean_distance(temp, kSink) <=
                     source_distance) {
-                claim("Temp: " + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ") is closer to sink than our current!", kDebug);
+                //claim("Temp: " + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ") is closer to sink than our current!", kDebug);
                 temp.set_hadlock(c.get_hadlock());
             } else {
-                claim("Temp is not closer to sink", kDebug);
+                //claim("Temp is not closer to sink", kDebug);
                 temp.set_hadlock(c.get_hadlock() + 1);
             }
             kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_hadlock(temp.get_hadlock());
             kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_hadlock());
             results.push_back(temp);
-            claim("Adding (x+1,y): (" + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ")", kDebug);
+            //claim("Adding (x+1,y): (" + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ")", kDebug);
         }
     }
     // (x-1, y)
@@ -169,16 +184,16 @@ vector<LeeNode> Hadlock::get_adjacent_coordinates(LeeNode c) {
             temp.set_cost(calculate_manhattan_distance(temp, kSource));
             if (calculate_euclidean_distance(temp, kSink) <=
                     source_distance) {
-                claim("Temp: " + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ") is closer to sink than our current!", kDebug);
+                //claim("Temp: " + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ") is closer to sink than our current!", kDebug);
                 temp.set_hadlock(c.get_hadlock());
             } else {
-                claim("Temp is not closer to sink", kDebug);
+                //claim("Temp is not closer to sink", kDebug);
                 temp.set_hadlock(c.get_hadlock() + 1);
             }
             kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_hadlock(temp.get_hadlock());
             kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_hadlock());
             results.push_back(temp);
-            claim("Adding (x+1,y): (" + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ")", kDebug);
+            //claim("Adding (x+1,y): (" + to_string(temp.get_x()) + ", " + to_string(temp.get_y()) + ")", kDebug);
         }
     }
     return results;

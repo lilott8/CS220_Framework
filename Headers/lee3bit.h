@@ -17,6 +17,8 @@ namespace Lee {
         void start(Route);
     private:
         int solve_recursive(int);
+
+        int solve_recursive_bi_directional(int);
         vector<LeeNode> get_adjacent_coordinates(LeeNode, int);
         LeeNode calculate_metric(LeeNode, int);
     };

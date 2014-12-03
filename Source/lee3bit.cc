@@ -26,9 +26,9 @@ void Lee3Bit::start(Route r) {
     claim("Using 3bit!", kWarning);
 
     if(is_valid()) {
-        kWaveFront.empty();
+        kWaveFrontSource.empty();
         kTraceBack.empty();
-        kWaveFront.push_front(kSource);
+        kWaveFrontSource.push_front(kSource);
 
         Path* p = new Path();
         p->set_source(kSource.get_coord());
@@ -36,7 +36,12 @@ void Lee3Bit::start(Route r) {
         kPathBack.push_back(p);
 
         // Solve the problem!
-        solve_recursive(1);
+        if (kBiDirectionEnabled) {
+            kWaveFrontSink.push_front(kSink);
+            solve_recursive_bi_directional(1);
+        } else {
+            solve_recursive(1);
+        }
     } else {
         claim("We cannot route path: " + r.source.coords_to_string()
                 + ", " + r.sink.coords_to_string(), kWarning);
@@ -44,24 +49,25 @@ void Lee3Bit::start(Route r) {
 }
 
 int Lee3Bit::solve_recursive(int iteration) {
-    //claim("Queue size: " + to_string(kWaveFront.size()), kNote);
+    //claim("Queue size: " + to_string(kWaveFrontSource.size()), kNote);
 
     // Base case 1: Not finding a solution
-    if (kWaveFront.size() < 1) {
-        claim("We could not find a solution for: " + kSource.coords_to_string()
-                + ", " + kSink.coords_to_string(), kWarning);
+    if (kWaveFrontSource.size() < 1) {
+        claim("We could not successfully route: "
+                + kSource.coords_to_string() + "->"
+                + kSink.coords_to_string(), kWarning);
         return iteration;
     }
 
     // Grab the first record
-    LeeNode curr = kWaveFront.front();
+    LeeNode curr = kWaveFrontSource.front();
     // pop off the first record
-    kWaveFront.pop_front();
+    kWaveFrontSource.pop_front();
 
     claim("Curr Coordinates: " + curr.to_string(), kNote);
 
     // Base case 2: We found the sink
-    if (is_sink(curr)) {// || kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() == LeeNode::NodeType::SINK) {
+    if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBack.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
@@ -76,7 +82,7 @@ int Lee3Bit::solve_recursive(int iteration) {
     vector<LeeNode> adjacent = get_adjacent_coordinates(curr, iteration);
 
     for (int x = 0; x < adjacent.size(); x++) {
-        kWaveFront.push_back(adjacent.at(x));
+        kWaveFrontSource.push_back(adjacent.at(x));
         claim("Adding: " + adjacent.at(x).to_string(), kDebug);
     }
     if (iteration % 10 == 0) {
@@ -102,6 +108,10 @@ int Lee3Bit::solve_recursive(int iteration) {
             }
         }
     }
+    return iteration;
+}
+
+int Lee3Bit::solve_recursive_bi_directional(int iteration) {
     return iteration;
 }
 
