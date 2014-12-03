@@ -93,6 +93,7 @@ int main(int argc,char* argv[]) {
 
     // Set the map of our algorithm
     algorithm->set_map(&map);
+    map.print_map();
 
     while(map.get_size_of_routes() > 0) {
         // Get the next route

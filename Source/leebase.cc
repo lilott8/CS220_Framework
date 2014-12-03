@@ -145,19 +145,43 @@ bool LeeBase::is_adjacent(LeeNode a, LeeNode b) {
 }
 
 
-bool LeeBase::is_placeable_router(LeeNode c) {
+bool LeeBase::is_placeable_router(LeeNode c, LeeNode::FoundBy fb) {
     if(this->kIntersectionEnabled) {
-        return is_placeable_intersection(c.get_x(), c.get_y());
+        if (!this->kBiDirectionEnabled) {
+            return is_placeable_intersection(c.get_x(), c.get_y());
+        } else {
+            return is_placeable_intersection_bd(c.get_x(), c.get_y(), fb);
+        }
     } else {
-        return is_placeable_no_intersection(c.get_x(), c.get_y());
+        if (!this->kBiDirectionEnabled) {
+            return is_placeable_no_intersection(c.get_x(), c.get_y());
+        } else {
+            return is_placeable_no_intersection_bd(c.get_x(), c.get_y(), fb);
+        }
     }
 }
 
 bool LeeBase::is_placeable_router(int x, int y) {
+    is_placeable_router(x, y, LeeNode::FoundBy::FNULL);
+}
+
+bool LeeBase::is_placeable_router(LeeNode c) {
+    is_placeable_router(c, LeeNode::FoundBy::FNULL);
+}
+
+bool LeeBase::is_placeable_router(int x, int y, LeeNode::FoundBy fb) {
     if(this->kIntersectionEnabled) {
-        return is_placeable_intersection(x, y);
+        if (!this->kBiDirectionEnabled) {
+            return is_placeable_intersection(x, y);
+        } else {
+            return is_placeable_intersection_bd(x, y, fb);
+        }
     } else {
-        return is_placeable_no_intersection(x, y);
+        if (!this->kBiDirectionEnabled) {
+            return is_placeable_no_intersection(x, y);
+        } else {
+            return is_placeable_no_intersection_bd(x, y, fb);
+        }
     }
 }
 
@@ -209,6 +233,58 @@ bool LeeBase::is_placeable_intersection(int x, int y) {
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SOURCE) {
+        return false;
+    }
+    return true;
+}
+
+bool LeeBase::is_placeable_no_intersection_bd(int x, int y, LeeNode::FoundBy fb) {
+    // Order matters here!
+    if (x > kMap->get_map()->size() - 1 || x < 0) {
+        return false;
+    }
+    if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
+        return false;
+    }
+    // check with the node itself if it's placeable, it knows
+    /*if(!kMap->get_map()->at(x).at(y)->is_placeable()) {
+        claim(kMap->get_map()->at(x).at(y)->to_string(), kWarning);
+        //return false;
+    }*/
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::BLOCKED) {
+        return false;
+    }
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SOURCE) {
+        return false;
+    }
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::TRACEBACK) {
+        return false;
+    }
+    if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
+        return false;
+    }
+    return true;
+}
+
+bool LeeBase::is_placeable_intersection_bd(int x, int y, LeeNode::FoundBy fb) {
+    // Order matters here!
+    if (x > kMap->get_map()->size() - 1 || x < 0) {
+        return false;
+    }
+    if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
+        return false;
+    }
+    // check with the node itself if it's placeable, it knows
+    /*if(!kMap->get_map()->at(x).at(y)->is_placeable()) {
+        return false;
+    }*/
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::BLOCKED) {
+        return false;
+    }
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SOURCE) {
+        return false;
+    }
+    if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
         return false;
     }
     return true;

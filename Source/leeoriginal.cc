@@ -72,7 +72,7 @@ int LeeOriginal::solve_recursive(int iteration) {
     /**
     * Check each possibility of the next wavefront
     */
-    vector<LeeNode> adjacent = get_adjacent_coordinates(curr, iteration);
+    vector<LeeNode> adjacent = get_adjacent_coordinates(curr, iteration, LeeNode::FoundBy::FNULL);
 
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFrontSource.push_back(adjacent.at(x));
@@ -97,6 +97,14 @@ int LeeOriginal::solve_recursive(int iteration) {
     return iteration;
 }
 
+/**
+* @method:
+*   recursive method which searches a map for a sink from both the sink and source
+* @int:
+*   monitors which iteration we are on
+* @return:
+*   arbitrary and deprecated
+*/
 int LeeOriginal::solve_recursive_bi_directional(int iteration) {
     //claim("Queue size: " + to_string(kWaveFrontSource.size()), kNote);
 
@@ -111,24 +119,34 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
     }
 
     LeeNode curr;
+    LeeNode::FoundBy foundBy;
     if (iteration % 2 == 0) {
         // Grab the first record
         curr = kWaveFrontSource.front();
+        claim("Source is searching: " + curr.to_string(), kNote);
         // pop off the first record
         kWaveFrontSource.pop_front();
-        claim("Searching from the source!", kDebug);
-        if (is_in_sink_vector(curr)) {
+        foundBy = LeeNode::FoundBy::FSOURCE;
+        if (curr.get_found_by() == LeeNode::FoundBy::FSINK) {
             found_intersection = true;
         }
     } else {
         // Grab the first record
         curr = kWaveFrontSink.front();
+        claim("Sink is searching: " + curr.to_string(), kNote);
         // pop off the first record
         kWaveFrontSink.pop_front();
-        claim("Searching from the sink!", kDebug);
-        if (is_in_source_vector(curr)) {
+        foundBy = LeeNode::FoundBy::FSINK;
+        if (curr.get_found_by() == LeeNode::FoundBy::FSOURCE) {
+            claim("We have converged!", kWarning);
             found_intersection = true;
         }
+    }
+
+    if (iteration > 300) {
+        claim("Leaving after 700 iterations", kWarning);
+        claim(LeeNode::convert_found_by_to_string(foundBy) + " is searching for: " + curr.to_string(), kWarning);
+        return iteration;
     }
 
     //claim("Curr Coordinates: " + curr.to_string(), kNote);
@@ -146,7 +164,7 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
     /**
     * Check each possibility of the next wavefront
     */
-    vector<LeeNode> adjacent = get_adjacent_coordinates(curr, iteration);
+    vector<LeeNode> adjacent = get_adjacent_coordinates(curr, iteration, foundBy);
 
     for (int x = 0; x < adjacent.size(); x++) {
         if (iteration % 2 == 0) {
@@ -157,8 +175,8 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
         //claim("Adding: " + adjacent.at(x).to_string(), kDebug);
     }
     //claim("*************************", kNote);
-    if (iteration % 2 == 0) {
-        kMap->print_map();
+    if (iteration % 15 == 0) {
+        //kMap->print_map();
         claim("=========================", kNote);
     }
 
@@ -175,58 +193,62 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
     return iteration;
 }
 
-vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration) {
+vector<LeeNode> LeeOriginal::get_adjacent_coordinates(LeeNode c, int iteration, LeeNode::FoundBy fb) {
     vector<LeeNode> results;
     LeeNode temp(c.get_x(), c.get_y());
+    if (c.get_found_by() == LeeNode::FoundBy::FNULL) {
+        claim("setting the foundby, because it's null", kDebug);
+        temp.set_found_by(fb);
+    }
 
     // (x, y+1)
-    if (is_placeable_router(c.get_x(), c.get_y() + 1)) {
-        temp.set_x_coord( c.get_x());
+    if (is_placeable_router(c.get_x(), c.get_y() + 1, fb)) {
+        temp.set_x_coord(c.get_x());
         temp.set_y_coord(c.get_y() + 1);
         //if(temp.get_output() < 1) {
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp, iteration);
+            temp = calculate_metric(temp, iteration, fb);
             results.push_back(temp);
             //claim("Adding (x,y+1): " + temp.to_string(), kDebug);
         }
-    }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x(), c.get_y() + 1);}
+    }// else {claim("gac: WE AREN'T PLACING: " + to_string(c.get_x()) + ", " + to_string(c.get_y() + 1), kNote);}
     // (x, y-1)
-    if (is_placeable_router(c.get_x(), c.get_y() - 1)) {
+    if (is_placeable_router(c.get_x(), c.get_y() - 1, fb)) {
         temp.set_x_coord(c.get_x());
         temp.set_y_coord(c.get_y() - 1);
         //if(temp.get_output() < 1) {
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp, iteration);
+            temp = calculate_metric(temp, iteration, fb);
             results.push_back(temp);
             //claim("Adding (x,y-1): " + temp.to_string(), kDebug);
         }
-    }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x(), c.get_y() - 1);}
+    }// else {claim("gac: WE AREN'T PLACING: " + to_string(c.get_x()) + ", " + to_string(c.get_y() - 1), kNote);}
     // (x+1, y)
-    if (is_placeable_router(c.get_x() + 1, c.get_y())) {
+    if (is_placeable_router(c.get_x() + 1, c.get_y(), fb)) {
         temp.set_x_coord(c.get_x() + 1);
         temp.set_y_coord(c.get_y());
         //if(temp.get_output() < 1) {
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp, iteration);
+            temp = calculate_metric(temp, iteration, fb);
             results.push_back(temp);
             //claim("Adding (x+1,y): " + temp.to_string(), kDebug);
         }
-    }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x() + 1, c.get_y());}
+    }// else {claim("gac: WE AREN'T PLACING: " + to_string(c.get_x()+1) + ", " + to_string(c.get_y()), kNote);}
     // (x-1, y)
-    if (is_placeable_router(c.get_x() - 1, c.get_y())) {
+    if (is_placeable_router(c.get_x() - 1, c.get_y(), fb)) {
         temp.set_x_coord(c.get_x() - 1);
         temp.set_y_coord(c.get_y());
         //if(temp.get_output() < 1) {
         if (!is_in_vector(temp)) {
-            temp = calculate_metric(temp, iteration);
+            temp = calculate_metric(temp, iteration, fb);
             results.push_back(temp);
             //claim("Adding (x-1,y): "+temp.to_string(), kDebug);
         }
-    }// else {printf("WE AREN'T PLACING: %d, %d ON THE QUEUE!!\n", c.get_x() - 1, c.get_y());}
+    }// else {claim("gac: WE AREN'T PLACING: " + to_string(c.get_x()-1) + ", " + to_string(c.get_y()), kNote);}
     return results;
 }
 
-LeeNode LeeOriginal::calculate_metric(LeeNode a, int i) {
+LeeNode LeeOriginal::calculate_metric(LeeNode a, int i, LeeNode::FoundBy fb) {
     LeeNode temp = a;
 
     // Mutate the internal node, so if we add it to the
@@ -234,8 +256,9 @@ LeeNode LeeOriginal::calculate_metric(LeeNode a, int i) {
     temp.set_leewave(LeeBase::calculate_lees_distance(a));
     temp.set_cost(temp.get_leewave());
     temp.set_output(temp.get_leewave());
-
-    //claim(temp.to_string(), kNote);
+    if (a.get_found_by() == LeeNode::FoundBy::FNULL && fb != LeeNode::FoundBy::FNULL) {
+        temp.set_found_by(fb);
+    }
 
     // Mutate the node's data on the map
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())
@@ -246,6 +269,13 @@ LeeNode LeeOriginal::calculate_metric(LeeNode a, int i) {
     // We must always set the output, even if it gets overridden!
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())
             ->set_output(temp.get_leewave());
+    // Who found the node?
+    if (temp.get_found_by() != LeeNode::FoundBy::FNULL &&
+            kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by() == LeeNode::FoundBy::FNULL) {
+        kMap->get_map()->at(temp.get_x()).at(temp.get_y())
+                ->set_found_by(fb);
+    }
+
 
     return temp;
 }

@@ -15,6 +15,9 @@ namespace Lee {
         enum NodeType {
             BLOCKED, SINK, SOURCE, NONE, TRACEBACK
         };
+        enum FoundBy {
+            FSINK, FSOURCE, FNULL
+        };
 
         LeeNode();
         LeeNode(int, int, int = 0);
@@ -28,6 +31,8 @@ namespace Lee {
 
 
         static string convert_type_to_string(LeeNode::NodeType);
+
+        static string convert_found_by_to_string(LeeNode::FoundBy);
         string to_string();
         string coords_to_string();
 
@@ -39,6 +44,7 @@ namespace Lee {
         void set_korn(double);
         void set_hadlock(int);
 
+        void set_found_by(FoundBy);
 
         int get_output();
         int get_leewave();
@@ -47,6 +53,8 @@ namespace Lee {
         double get_ruben();
         double get_korn();
         int get_hadlock();
+
+        FoundBy get_found_by();
 
         bool is_placeable();
 
@@ -62,6 +70,7 @@ namespace Lee {
         double kRuben;
         double kKorn;
         int kHadlock;
+        FoundBy kFoundBy;
     };
 }
 

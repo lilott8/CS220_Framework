@@ -1,5 +1,4 @@
 #include <node.h>
-#include <string>
 #include <leenode.h>
 #include <claim.h>
 
@@ -22,6 +21,7 @@ LeeNode::LeeNode(int x, int y, int cost) {
     this->kKorn = 0.0;
     this->kRuben = 0.0;
     this->kOutput = 0;
+    this->kFoundBy = LeeNode::FNULL;
 }
 
 LeeNode::LeeNode(Point p, int cost) {
@@ -35,6 +35,7 @@ LeeNode::LeeNode(Point p, int cost) {
     this->kKorn = 0.0;
     this->kRuben = 0.0;
     this->kOutput = 0;
+    this->kFoundBy = LeeNode::FNULL;
 }
 
 LeeNode::~LeeNode() {
@@ -75,6 +76,10 @@ void LeeNode::set_output(int o) {
     kOutput = o;
 }
 
+void LeeNode::set_found_by(FoundBy f) {
+    kFoundBy = f;
+}
+
 int LeeNode::get_output() {
     return kOutput;
 }
@@ -103,6 +108,10 @@ double LeeNode::get_korn() {
     return this->kKorn;
 }
 
+LeeNode::FoundBy LeeNode::get_found_by() {
+    return this->kFoundBy;
+}
+
 bool LeeNode::is_placeable() {
     if(this->kOutput > 0) return false;
     if(this->get_cost() > 0) return false;
@@ -126,6 +135,7 @@ string LeeNode::to_string() {
             + "\tRubens Value: " + std::to_string(this->kRuben)
             + "\tKorns Value: " + std::to_string(this->kKorn)
             + "\tHadlocks Value: " + std::to_string(this->kHadlock)
+            + "\tFound by: " + convert_found_by_to_string(this->kFoundBy)
     + "\tOutput: " + std::to_string(this->get_output());
 
     return output;
@@ -154,6 +164,22 @@ string LeeNode::convert_type_to_string(NodeType t) {
             break;
         case TRACEBACK:
             s = "r";
+            break;
+    }
+    return s;
+}
+
+string LeeNode::convert_found_by_to_string(FoundBy t) {
+    string s = "";
+    switch (t) {
+        case FNULL:
+            s = "null";
+            break;
+        case FSINK:
+            s = "sink";
+            break;
+        case FSOURCE:
+            s = "source";
             break;
     }
     return s;
