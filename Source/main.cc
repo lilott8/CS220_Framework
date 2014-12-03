@@ -1,12 +1,12 @@
 
 #include "../Headers/grid.h"
-#include "../Headers/problem_object.h"
 #include <map.h>
 #include <claim.h>
 #include <leebase.h>
 #include <leeoriginal.h>
 #include <lee3bit.h>
 #include <ruben.h>
+#include <hadlock.h>
 
 using std::cerr;
 using std::cout;
@@ -163,10 +163,14 @@ int main(int argc,char* argv[]) {
 
 unique_ptr<LeeBase> child_factory(Algorithm a) {
     switch(a) {
-        case LEE: return unique_ptr<LeeOriginal> (new LeeOriginal());
+        default:
+        case LEE:
+            return unique_ptr<LeeOriginal>(new LeeOriginal());
         //case LEE2BIT: return unique_ptr<Lee2Bit> (new Lee2Bit());
         case LEE3BIT: return unique_ptr<Lee3Bit> (new Lee3Bit());
         case RUBEN: return unique_ptr<Ruben> (new Ruben());
+        case HADLOCK:
+            return unique_ptr<Hadlock>(new Hadlock());
     }
 }
 

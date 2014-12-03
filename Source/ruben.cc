@@ -24,20 +24,32 @@ Ruben::~Ruben() {
 
 void Ruben::start(Route r) {
     LeeBase::start(r);
-    
-    printf("Starting Ruben's Algorithm\n");
 
-    kWaveFrontPQ.push(kSource);
+    claim("Using Ruben's!", kWarning);
 
-    solve_recursive(1);
+    if (is_valid()) {
+        LeeBase::clear_queues();
+        kWaveFrontPQ = priority_queue<LeeNode, vector<LeeNode>, CompareNodesRuben>();
+        kWaveFrontPQ.push(kSource);
+
+        Path *p = new Path();
+        p->set_source(kSource.get_coord());
+        p->set_sink(kSink.get_coord());
+        kPathBack.push_back(p);
+
+        // Solve the problem!
+        solve_recursive(1);
+    } else {
+        claim("We cannot route path: " + r.source.coords_to_string()
+                + ", " + r.sink.coords_to_string(), kWarning);
+    }
 }
 
 int Ruben::solve_recursive(int iteration) {
 // Base case 1: Not finding a solution
     //printf("size of queue: %lu\n", kWaveFront.size());
     if (kWaveFrontPQ.size() < 1) {
-        printf("We have nothing in our queue\n");
-        printf("=====================\n\n");
+        claim("We have nothing in our queue", kDebug);
         return iteration;
     }
 
