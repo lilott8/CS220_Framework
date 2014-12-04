@@ -8,7 +8,7 @@ path.cc
 pathsegment.cc
 segmentgroup.cc
 problem_object.cc
-map.cpp
+map.cc
 leenode.cc
 leebase.cc
 leeoriginal.cc

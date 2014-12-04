@@ -36,13 +36,6 @@ Map Map::set_blockages(vector<Blocker> b) {
     Point start;
     claim("Placing blockages", kNote);
     for(int x = 0;x < (int)b.size();x++) {
-        /*claim("blocker details:", kNote);
-        claim("blocker name: " + b.at(x).name, kNote);
-        claim("blocker start coords: " + to_string(b.at(x).location.x) +
-                ", " + to_string(b.at(x).location.y), kNote);
-        claim("blocker height, width: " + to_string(b.at(x).height) +
-                ", " + to_string(b.at(x).width), kNote);
-        claim("*************************", kNote);*/
         height = b.at(x).height;
         width = b.at(x).width;
         start = b.at(x).location;
@@ -163,6 +156,7 @@ void Map::zero_map() {
                 kMap.at(x).at(y)->set_hadlock(0);
                 kMap.at(x).at(y)->set_korn(0);
                 kMap.at(x).at(y)->set_ruben(0);
+            kMap.at(x).at(y)->set_found_by(LeeNode::FoundBy::FNULL);
             //}
             //if(kMap.at(x).at(y)->get_type() == LeeNode::NodeType::TRACEBACK) {
             //    kMap.at(x).at(y)->set_output(0);
@@ -202,7 +196,16 @@ void Map::print_map() {
                     kMap.at(x).at(y)->get_type() == LeeNode::NodeType::TRACEBACK) {
                 output += LeeNode::convert_type_to_string(kMap.at(x).at(y)->get_type()) + "\t";
             } else {
-                output += to_string(kMap.at(x).at(y)->get_output()) + "\t";
+                string t = "";
+                switch (kMap.at(x).at(y)->get_found_by()) {
+                    case LeeNode::FoundBy::FSINK:
+                        t = "*";
+                        break;
+                    case LeeNode::FoundBy::FSOURCE:
+                        t = "^";
+                        break;
+                }
+                output += to_string(kMap.at(x).at(y)->get_output()) + t + "\t";
             }
         }
         output += "\n";

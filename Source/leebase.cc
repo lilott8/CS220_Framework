@@ -261,7 +261,13 @@ bool LeeBase::is_placeable_no_intersection_bd(int x, int y, LeeNode::FoundBy fb)
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
+        claim("RETURN FALSE!!!! FB Argument: " + LeeNode::convert_found_by_to_string(fb) + "\t FB at Map Coords: " +
+                LeeNode::convert_found_by_to_string(kMap->get_map()->at(x).at(y)->get_found_by()), kNote);
         return false;
+    } else {
+        claim("Differing FB's: \tFB Argument: " + LeeNode::convert_found_by_to_string(fb) + "\t FB at Map Coords: " +
+                kMap->get_map()->at(x).at(y)->coords_to_string() + "\t" +
+                LeeNode::convert_found_by_to_string(kMap->get_map()->at(x).at(y)->get_found_by()), kNote);
     }
     return true;
 }
@@ -285,7 +291,12 @@ bool LeeBase::is_placeable_intersection_bd(int x, int y, LeeNode::FoundBy fb) {
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
+        claim("FB Argument: " + LeeNode::convert_found_by_to_string(fb) + "\t FB at Map Coords: " +
+                LeeNode::convert_found_by_to_string(kMap->get_map()->at(x).at(y)->get_found_by()), kNote);
         return false;
+    } else {
+        claim("Differing FB's: \tFB Argument: " + LeeNode::convert_found_by_to_string(fb) + "\t FB at Map Coords: " +
+                LeeNode::convert_found_by_to_string(kMap->get_map()->at(x).at(y)->get_found_by()), kNote);
     }
     return true;
 }

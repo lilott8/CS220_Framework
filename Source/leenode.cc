@@ -172,6 +172,7 @@ string LeeNode::convert_type_to_string(NodeType t) {
 string LeeNode::convert_found_by_to_string(FoundBy t) {
     string s = "";
     switch (t) {
+        default:
         case FNULL:
             s = "null";
             break;
