@@ -1,0 +1,14 @@
+{
+  "file_name": "hadlock_simple",
+  "height": 20,
+  "width": 20,
+  "routeList": [
+    {
+      "name": "route1",
+      "source_x": 0,
+      "source_y": 9,
+      "sink_x": 19,
+      "sink_y": 9
+    }
+  ]
+}

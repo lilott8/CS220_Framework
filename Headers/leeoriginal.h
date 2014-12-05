@@ -19,7 +19,7 @@ namespace Lee {
 
         vector<LeeNode> get_adjacent_coordinates(LeeNode, int, LeeNode::FoundBy);
 
-        LeeNode calculate_metric(LeeNode, int, LeeNode::FoundBy);
+        LeeNode calculate_metric(LeeNode, int);
     };
 }
 #endif //_LEEORIGINAL_H_

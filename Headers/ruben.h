@@ -16,12 +16,15 @@ namespace Lee {
         ~Ruben();
         void start(Route);
     private:
-        priority_queue <LeeNode, vector<LeeNode>, CompareNodesRuben> kWaveFrontPQ;
+        priority_queue<LeeNode, vector<LeeNode>, CompareNodesRuben> kWaveFrontSourcePQ;
+        priority_queue<LeeNode, vector<LeeNode>, CompareNodesRuben> kWaveFrontSinkPQ;
         int solve_recursive(int);
 
         int solve_recursive_bi_directional(int);
-        vector<LeeNode> get_adjacent_coordinates(LeeNode, int);
-        LeeNode calculate_metric(LeeNode, int);
+
+        vector<LeeNode> get_adjacent_coordinates(LeeNode, LeeNode::FoundBy);
+
+        LeeNode calculate_metric(LeeNode, LeeNode::FoundBy);
     };
 }
 #endif //_RUBEN_H_
