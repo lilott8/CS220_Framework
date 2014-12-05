@@ -27,7 +27,7 @@ void Lee3Bit::start(Route r) {
 
     if(is_valid()) {
         kWaveFrontSource.empty();
-        kTraceBack.empty();
+        kTraceBackSource.empty();
         kWaveFrontSource.push_front(kSource);
 
         Path* p = new Path();
@@ -69,7 +69,7 @@ int Lee3Bit::solve_recursive(int iteration) {
     // Base case 2: We found the sink
     if (is_sink(curr)) {
         // add the sink to the trace_back
-        kTraceBack.push_back(curr);
+        kTraceBackSource.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
         claim("We found the sink: " + curr.to_string(), kDebug);
         return iteration;
@@ -93,17 +93,17 @@ int Lee3Bit::solve_recursive(int iteration) {
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
-    if (kTraceBack.size() > 0) {
-        if (kTraceBack.back().get_cost() == 1) {
+    if (kTraceBackSource.size() > 0) {
+        if (kTraceBackSource.back().get_cost() == 1) {
             // Handle the 3->1 hand off
-            if (curr.get_cost() == 3 && is_adjacent(curr, kTraceBack.back())) {
-                kTraceBack.push_back(curr);
+            if (curr.get_cost() == 3 && is_adjacent(curr, kTraceBackSource.back())) {
+                kTraceBackSource.push_back(curr);
                 kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
             }
             // Otherwise just decrement as you should
         } else {
-            if (curr.get_cost() < kTraceBack.back().get_cost() && is_adjacent(curr, kTraceBack.back())) {
-                kTraceBack.push_back(curr);
+            if (curr.get_cost() < kTraceBackSource.back().get_cost() && is_adjacent(curr, kTraceBackSource.back())) {
+                kTraceBackSource.push_back(curr);
                 kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
             }
         }

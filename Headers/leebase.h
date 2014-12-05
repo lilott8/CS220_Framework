@@ -40,7 +40,8 @@ namespace Lee {
         deque<LeeNode> kWaveFrontSource;
         deque<LeeNode> kWaveFrontSink;
         vector<Path*> kPathBack;
-        vector <LeeNode> kTraceBack;
+        vector<LeeNode> kTraceBackSink;
+        vector<LeeNode> kTraceBackSource;
         bool kIntersectionEnabled = false;
         bool kBiDirectionEnabled = false;
         bool kValidPlacement;
@@ -78,6 +79,8 @@ namespace Lee {
         bool is_valid_placement(LeeNode);
         bool is_in_sink_vector(LeeNode);
         bool is_in_source_vector(LeeNode);
+
+        bool is_in_vector(LeeNode, LeeNode::FoundBy);
     };
 }
 #endif //_LEEBASE_H_

@@ -261,13 +261,7 @@ bool LeeBase::is_placeable_no_intersection_bd(int x, int y, LeeNode::FoundBy fb)
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
-        claim("RETURN FALSE!!!! FB Argument: " + LeeNode::convert_found_by_to_string(fb) + "\t FB at Map Coords: " +
-                LeeNode::convert_found_by_to_string(kMap->get_map()->at(x).at(y)->get_found_by()), kNote);
         return false;
-    } else {
-        claim("Differing FB's: \tFB Argument: " + LeeNode::convert_found_by_to_string(fb) + "\t FB at Map Coords: " +
-                kMap->get_map()->at(x).at(y)->coords_to_string() + "\t" +
-                LeeNode::convert_found_by_to_string(kMap->get_map()->at(x).at(y)->get_found_by()), kNote);
     }
     return true;
 }
@@ -374,7 +368,8 @@ string LeeBase::get_path_back() {
 }
 
 void LeeBase::clear_queues() {
-    this->kTraceBack.clear();
+    this->kTraceBackSource.clear();
+    this->kTraceBackSink.clear();
     this->kWaveFrontSource.clear();
     this->kWaveFrontSink.clear();
 }
@@ -385,4 +380,16 @@ void LeeBase::set_korn(double d) {
 
 double LeeBase::get_korn() {
     return kKornModifier;
+}
+
+bool LeeBase::is_in_vector(LeeNode c, LeeNode::FoundBy fb) {
+    switch (fb) {
+        default:
+        case LeeNode::FoundBy::FSOURCE:
+            return is_in_source_vector(c);
+            break;
+        case LeeNode::FoundBy::FSINK:
+            return is_in_sink_vector(c);
+            break;
+    }
 }

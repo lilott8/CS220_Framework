@@ -66,7 +66,7 @@ int Hadlock::solve_recursive(int iteration) {
     // Base case 2: We found the sink
     if (is_sink(curr)) {
         // add the sink to the trace_back
-        kTraceBack.push_back(curr);
+        kTraceBackSource.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())
                 ->set_type(LeeNode::NodeType::TRACEBACK);
         claim("We found the sink!", kDebug);
@@ -96,9 +96,9 @@ int Hadlock::solve_recursive(int iteration) {
     /**
     * TODO: Implement traceback logic for hadlock
     */
-    if (kTraceBack.size() > 0 && curr.get_hadlock() <= kTraceBack.back().get_hadlock()
-            && is_adjacent(curr, kTraceBack.back())) {
-        kTraceBack.push_back(curr);
+    if (kTraceBackSource.size() > 0 && curr.get_hadlock() <= kTraceBackSource.back().get_hadlock()
+            && is_adjacent(curr, kTraceBackSource.back())) {
+        kTraceBackSource.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
     }
 

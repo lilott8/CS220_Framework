@@ -1,13 +1,13 @@
 {
   "file_name": "debug_tiny",
-  "height": 5,
-  "width": 5,
+  "height": 2,
+  "width": 2,
   "routeList": [
     {
       "name": "route1",
       "source_x": 0,
-      "source_y": 4,
-      "sink_x": 4,
+      "source_y": 1,
+      "sink_x": 1,
       "sink_y": 0
     }
   ]

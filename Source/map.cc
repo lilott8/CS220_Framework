@@ -63,6 +63,7 @@ Map Map::set_sources_and_sinks(vector<Connection> v) {
         // Declare the source(s)
         LeeNode temp = LeeNode(v.at(x).source);
         temp.set_type(LeeNode::NodeType::SOURCE);
+        temp.set_found_by(LeeNode::FoundBy::FSOURCE);
         //claim("Source: " + temp.to_string(), kDebug);
         //kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SOURCE);
         route.source = temp;
@@ -70,6 +71,7 @@ Map Map::set_sources_and_sinks(vector<Connection> v) {
         // Declare the sink(s)
         temp = LeeNode(v.at(x).sink);
         temp.set_type(LeeNode::NodeType::SINK);
+        temp.set_found_by(LeeNode::FoundBy::FSINK);
         //claim("Sink: " + temp.to_string(), kDebug);
         //kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SINK);
         route.sink = temp;
