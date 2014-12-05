@@ -1,7 +1,7 @@
 #include <deque>
-#include <leebase.h>
-#include <claim.h>
-#include "lee3bit.h"
+#include "../Headers/leebase.h"
+#include "../Headers/claim.h"
+#include "../Headers/lee3bit.h"
 
 using namespace Lee;
 using namespace std;

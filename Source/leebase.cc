@@ -1,8 +1,8 @@
 #include <deque>
 #include <stdlib.h>
 #include <cmath>
-#include <claim.h>
-#include "LeeBase.h"
+#include "../Headers/claim.h"
+#include "../Headers/LeeBase.h"
 
 using namespace Lee;
 using namespace Utilities;

@@ -1,8 +1,8 @@
 #include <deque>
 #include <queue>
-#include <leebase.h>
-#include <claim.h>
-#include "hadlock.h"
+#include "../Headers/leebase.h"
+#include "../Headers/claim.h"
+#include "../Headers/hadlock.h"
 
 Hadlock::Hadlock() {
     //LeeBase::LeeBase();
