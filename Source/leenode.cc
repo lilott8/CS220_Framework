@@ -1,6 +1,6 @@
-#include <node.h>
-#include <leenode.h>
-#include <claim.h>
+#include "../Headers/node.h"
+#include "../Headers/leenode.h"
+#include "../Headers/claim.h"
 
 using namespace Utilities;
 using namespace std;

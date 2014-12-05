@@ -1,7 +1,7 @@
-#include <leenode.h>
-#include <leebase.h>
-#include <claim.h>
-#include <ruben.h>
+#include "../Headers/leenode.h"
+#include "../Headers/leebase.h"
+#include "../Headers/claim.h"
+#include "../Headers/ruben.h"
 
 using namespace Lee;
 using namespace Utilities;

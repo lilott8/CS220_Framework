@@ -1,6 +1,6 @@
-#include <leebase.h>
-#include <leeoriginal.h>
-#include <claim.h>
+#include "../Headers/leebase.h"
+#include "../Headers/leeoriginal.h"
+#include "../Headers/claim.h"
 
 using namespace Lee;
 using namespace Utilities;

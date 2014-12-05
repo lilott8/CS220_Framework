@@ -1,12 +1,12 @@
 
 #include "../Headers/grid.h"
-#include <map.h>
-#include <claim.h>
-#include <leebase.h>
-#include <leeoriginal.h>
-#include <lee3bit.h>
-#include <ruben.h>
-#include <hadlock.h>
+#include "../Headers/map.h"
+#include "../Headers/claim.h"
+#include "../Headers/leebase.h"
+#include "../Headers/leeoriginal.h"
+#include "../Headers/lee3bit.h"
+#include "../Headers/ruben.h"
+#include "../Headers/hadlock.h"
 
 using std::cerr;
 using std::cout;
