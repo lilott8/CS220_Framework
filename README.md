@@ -3,8 +3,9 @@ CS220 Project Framework
 
 ## Project Group
 
-Jason Ott
 Bryan Marsh
+
+Jason Ott
 
 ## Usage
 
@@ -16,7 +17,8 @@ The defaults are as follows:
  - intersection: false
  - korn modifier: 1.0
  
- Argument space definition:
+### Argument space definition:
+
  - test_file: any json file that follows the documented format
  - algorithm: lee | lee2bit | lee3bit | ruben | hadlock
  - bi-directional: 1 | 0 (translates to true or false)
