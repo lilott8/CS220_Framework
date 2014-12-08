@@ -1,6 +1,44 @@
 CS220 Project Framework
 ===============
 
+## Project Group
+
+Jason Ott
+Bryan Marsh
+
+## Usage
+
+Usage: ./grid_router [<test_file> <algorithm> <bi-directional> <intersection> <korn modifier>]
+The defaults are as follows:
+ - test_file: ../Tests/debug.json
+ - algorithm: lee
+ - bi-directional: false
+ - intersection: false
+ - korn modifier: 1.0
+ 
+ Argument space definition:
+ - test_file: any json file that follows the documented format
+ - algorithm: lee | lee2bit | lee3bit | ruben | hadlock
+ - bi-directional: 1 | 0 (translates to true or false)
+ - intersection: 1 | 0 (translates to true or false)
+ - korn modifier: >= 1.0
+ 
+## Assumptions
+
+As we are operating within a framework provided, we will state some assumptions in an effort to remove any ambiguity
+
+ **Assumption 1:**
+    We assume that for intersections you can share a valid path.  This means that paths can share a some, none, or most of a given path of a previous run
+    
+ **Assumption 2:**
+    A valid path is one where a source successfully connects to it's given sink as defined in the problem space given the arguments provided for program use.  If the defined source/sink cannot meet, the route is abandoned as a failure
+    
+ **Assumption 3:**
+    While we check for validity, we assume all input will be in the form of 0 to n-1.  Input that does not meet this assumption will not result in an error, and that route or problem object will be invalid
+    
+ **Assumption 4:**
+    we do not accept one source routing to multiple sinks.  To put it simple, we will only route a problem that has a unique one-to-one relationship.
+    
 ## Project Overview
 
 You will use this framework for the following projects:
