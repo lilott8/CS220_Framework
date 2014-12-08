@@ -19,7 +19,7 @@ LeeOriginal::~LeeOriginal() {}
 void LeeOriginal::start(Route r) {
     LeeBase::start(r);
 
-    if(is_valid()) {
+    //if(is_valid()) {
         kWaveFrontSource.push_front(kSource);
 
         Path* p = new Path();
@@ -35,10 +35,10 @@ void LeeOriginal::start(Route r) {
         } else {
             solve_recursive(1);
         }
-    } else {
-        claim("We cannot route path: " + r.source.coords_to_string()
-                + ", " + r.sink.coords_to_string(), kWarning);
-    }
+    //} else {
+    //    claim("We cannot route path: " + r.source.coords_to_string()
+    //            + ", " + r.sink.coords_to_string(), kWarning);
+    //}
 }
 
 int LeeOriginal::solve_recursive(int iteration) {

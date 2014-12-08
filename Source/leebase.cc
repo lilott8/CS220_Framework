@@ -35,22 +35,11 @@ void LeeBase::enable_bi_direction() {
 void LeeBase::start(Route route) {
     // Reset our queues so that previous entries don't show up!
     clear_queues();
-    if(is_valid_placement(route.source)) {
-        //claim("Source has a valid placement", kDebug);
         kSource = route.source;
         kMap->get_map()->at(kSource.get_x()).at(kSource.get_y())->set_type(LeeNode::NodeType::SOURCE);
-        kValidPlacement = true;
-    } else {
-        kValidPlacement = false;
-    }
-    if(is_valid_placement(route.sink)) {
-        //claim("Sink has a valid placement", kDebug);
+
         kSink = route.sink;
         kMap->get_map()->at(kSink.get_x()).at(kSink.get_y())->set_type(LeeNode::NodeType::SINK);
-        kValidPlacement = true;
-    } else {
-        kValidPlacement = false;
-    }
 
     //claim("We are starting to run our algorithm", kDebug);
 }

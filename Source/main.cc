@@ -93,7 +93,7 @@ int main(int argc,char* argv[]) {
 
     // Set the map of our algorithm
     algorithm->set_map(&map);
-    map.print_map();
+    //map.print_map();
 
     while(map.get_size_of_routes() > 0) {
         // Get the next route
@@ -102,7 +102,7 @@ int main(int argc,char* argv[]) {
         // Solve the route
         algorithm->start(work);
         claim("=========================", kDebug);
-        map.print_map();
+        //map.print_map();
         // Clear the map out
         map.zero_map();
     }

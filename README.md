@@ -39,7 +39,13 @@ As we are operating within a framework provided, we will state some assumptions 
     While we check for validity, we assume all input will be in the form of 0 to n-1.  Input that does not meet this assumption will not result in an error, and that route or problem object will be invalid
     
  **Assumption 4:**
-    we do not accept one source routing to multiple sinks.  To put it simple, we will only route a problem that has a unique one-to-one relationship.
+        To continue on Assumption 3, we assume that if the region of blockage size + it's starting x/y coordinate exceeds that of the size of the map space, we abandon solving the problem.  We will assume that there are other problems in the problem definition file.
+    
+ **Assumption 5:**
+    We do not accept one source routing to multiple sinks.  To put it simple, we will only route a problem that has a unique one-to-one relationship.
+    
+ **Assumption 6:**
+    If a source and sink have the same coordinates, the route is deemed un-routable.
     
 ## Project Overview
 

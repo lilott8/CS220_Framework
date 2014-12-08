@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <leebase.h>
 #include "../Headers/leenode.h"
 #include "../Headers/Map.h"
 #include "../Headers/edge.h"
@@ -35,10 +36,15 @@ Map Map::set_blockages(vector<Blocker> b) {
     int width;
     Point start;
     claim("Placing blockages", kNote);
+
     for(int x = 0;x < (int)b.size();x++) {
         height = b.at(x).height;
         width = b.at(x).width;
         start = b.at(x).location;
+
+        if(height + start.x > kWidth || width + start.y > kHeight) {
+            claim("We cannot create the map: invalid blockage size", kError);
+        }
 
         int h = 0;
         int w = 0;
@@ -67,6 +73,12 @@ Map Map::set_sources_and_sinks(vector<Connection> v) {
         //claim("Source: " + temp.to_string(), kDebug);
         //kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SOURCE);
         route.source = temp;
+        // Check for incorrect placement
+        if(route.source.get_x() < 0 || route.source.get_y() < 0
+                || route.source.get_x() >= kWidth || route.source.get_y() >= kHeight) {
+            claim("We cannot route: " + route.source.coords_to_string() + ": out of bounds placement", kWarning);
+            continue;
+        }
 
         // Declare the sink(s)
         temp = LeeNode(v.at(x).sink);
@@ -75,10 +87,23 @@ Map Map::set_sources_and_sinks(vector<Connection> v) {
         //claim("Sink: " + temp.to_string(), kDebug);
         //kMap.at(temp.get_x()).at(temp.get_y())->set_type(LeeNode::NodeType::SINK);
         route.sink = temp;
+        // check for incorrect placement
+        if(route.sink.get_x() < 0 || route.sink.get_y() < 0
+                || route.sink.get_x() >= kWidth || route.sink.get_y() >= kHeight) {
+            claim("We cannot route: " + route.sink.coords_to_string() + ": out of bounds placement", kWarning);
+            continue;
+        }
+
 
         // Add our connections
-        kConnections.push_back(v.at(x));
-        kRoutes.push_back(route);
+        if(!LeeBase::is_same_coordinate(route.source, route.sink)) {
+            kConnections.push_back(v.at(x));
+            kRoutes.push_back(route);
+            kMap.at(route.sink.get_x()).at(route.sink.get_y())->set_type(LeeNode::NodeType::SINK);
+            kMap.at(route.source.get_x()).at(route.source.get_y())->set_type(LeeNode::NodeType::SOURCE);
+        } else {
+            claim(route.source.coords_to_string() + " is the same as it's sink, thus unroutable", kWarning);
+        }
     }
     return *this;
 }
