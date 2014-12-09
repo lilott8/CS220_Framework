@@ -134,21 +134,27 @@ unique_ptr<LeeBase> child_factory(Algorithm a) {
 
 Algorithm resolve_algorithm(string a) {
     if (a.compare("ruben") == 0) {
+        claim("Using ruben's/korn's algorithm", kDebug);
         return RUBEN;
     }
     if (a.compare("korn") == 0) {
-        return KORN;
+        claim("Using ruben's/korn's algorithm", kDebug);
+        return RUBEN;
     }
     if (a.compare("hadlock") == 0) {
+        claim("Using hadlock's algorithm", kDebug);
         return HADLOCK;
     }
     if (a.compare("lee3bit") == 0) {
+        claim("Using Lee3bit algorithm", kDebug);
         return LEE3BIT;
     }
     if (a.compare("lee2bit") == 0) {
+        claim("Using Lee2bit algorithm", kDebug);
         return LEE2BIT;
     }
     if (a.compare("lee") == 0) {
+        claim("Using Lee's algorithm", kDebug);
         return LEE;
     }
     return LEE;

@@ -103,6 +103,7 @@ int Lee3Bit::solve_recursive(int iteration) {
 
     solve_recursive(iteration + 1);
 
+    // TODO: add the pathsegment building here
     // Handle the trace_back generation for the algorithm
     if (kTraceBackSource.size() > 0) {
         if (kTraceBackSource.back().get_cost() == 1) {
@@ -111,6 +112,8 @@ int Lee3Bit::solve_recursive(int iteration) {
                 kTraceBackSource.push_back(curr);
                 kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
                 kTraceBackSource.push_back(curr);
+                PathSegment *ps = new PathSegment(curr.get_coord(), kTraceBackSource.at(kTraceBackSource.size() - 2).get_coord());
+                kPathBack.back()->add_segment(ps);
             }
             // Otherwise just decrement as you should
         } else {
@@ -118,6 +121,8 @@ int Lee3Bit::solve_recursive(int iteration) {
                 kTraceBackSource.push_back(curr);
                 kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
                 kTraceBackSink.push_back(curr);
+                PathSegment *ps = new PathSegment(curr.get_coord(), kTraceBackSource.at(kTraceBackSource.size() - 2).get_coord());
+                kPathBack.back()->add_segment(ps);
             }
         }
     }
