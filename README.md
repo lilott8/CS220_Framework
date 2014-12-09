@@ -9,7 +9,9 @@ Jason Ott
 
 ## Usage
 
-Usage: ./grid_router [/<test_file/> <<algorithm>> <<bi-directional>> <<intersection>> <<korn modifier>>]
+`Usage: ./grid_router [<test_file> <algorithm> <bi-directional> <intersection> <korn modifier>]`
+`Example: ./grid_router ../Tests/debug.json lee 0 0 1.0`
+
 The defaults are as follows:
  - test_file: ../Tests/debug.json
  - algorithm: lee
