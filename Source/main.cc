@@ -9,6 +9,8 @@
 #include "../Headers/hadlock.h"
 #include "../Headers/lee2bit.h"
 
+#include <memory>
+
 using std::cerr;
 using std::cout;
 using std::endl;
