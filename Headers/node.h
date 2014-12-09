@@ -2,6 +2,7 @@
 #define _NODE_BASE_H_
 
 #include "../Headers/point.h"
+#include <algorithm>
 #include <vector>
 #include <iostream>
 
