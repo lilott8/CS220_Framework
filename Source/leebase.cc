@@ -285,13 +285,21 @@ bool LeeBase::is_placeable_intersection_bd(int x, int y, LeeNode::FoundBy fb) {
 }
 
 bool LeeBase::is_valid_placement(LeeNode c) {
-    return (kMap->get_map()->at(c.get_x()).at(c.get_y())->get_type() ==
+    return is_valid_placement(c.get_x(), c.get_y());
+}
+
+bool LeeBase::is_valid_placement(int x, int y) {
+    return (kMap->get_map()->at(x).at(y)->get_type() ==
             LeeNode::NONE);
 }
 
 bool LeeBase::is_in_bounds(int x, int y) {
     return (x < kMap->get_map()->size() && x >= 0) &&
             (y < kMap->get_map()->at(x).size() && y >= 0);
+}
+
+bool LeeBase::is_in_bounds(LeeNode c) {
+    return is_in_bounds(c.get_x(), c.get_y());
 }
 
 bool LeeBase::is_adjacent_to_source(LeeNode c) {

@@ -13,6 +13,8 @@ using namespace Utilities;
 namespace Lee {
     class LeeBase {
     public:
+        enum LeeDirection{NORTH, EAST, SOUTH, WEST};
+
         LeeBase();
 
         LeeBase(Map *);
@@ -80,6 +82,9 @@ namespace Lee {
         bool is_adjacent_to_source(LeeNode);
         bool is_in_vector(LeeNode);
         bool is_in_bounds(int, int);
+        bool is_in_bounds(LeeNode);
+
+        bool is_valid_placement(int, int);
         bool is_valid_placement(LeeNode);
         bool is_in_sink_vector(LeeNode);
         bool is_in_source_vector(LeeNode);
