@@ -112,7 +112,9 @@ int main(int argc,char* argv[]) {
         //map.print_map();
         // Clear the map out
         map.zero_map();
-        algorithm->get_path_back(x)->print();
+        if(x < algorithm->get_path_back_size()) {
+            algorithm->get_path_back(x)->print();
+        }
         map.print_map();
         x++;
     }

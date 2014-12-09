@@ -23,8 +23,6 @@ Lee3Bit::~Lee3Bit() {
 void Lee3Bit::start(Route r) {
     LeeBase::start(r);
 
-    claim("Using 3bit!", kWarning);
-
     kWaveFrontSource.push_front(kSource);
 
     Path* p = new Path();

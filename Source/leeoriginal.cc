@@ -19,8 +19,6 @@ LeeOriginal::~LeeOriginal() {}
 void LeeOriginal::start(Route r) {
     LeeBase::start(r);
 
-    claim("Using regular lee's!", kWarning);
-
     kWaveFrontSource.push_front(kSource);
 
     Path* p = new Path();

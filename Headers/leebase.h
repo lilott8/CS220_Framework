@@ -41,6 +41,7 @@ namespace Lee {
         double calculate_euclidean_distance(LeeNode, LeeNode);
         bool is_adjacent(LeeNode, LeeNode);
         static bool is_same_coordinate(LeeNode, LeeNode);
+        int get_path_back_size();
 
     protected:
         // appease the compiler...
@@ -60,6 +61,7 @@ namespace Lee {
         double kKornModifier = 1;
 
         void clear_queues();
+
         bool is_sink(LeeNode);
         bool is_sink(int, int);
         bool is_source(LeeNode);

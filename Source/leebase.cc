@@ -368,6 +368,10 @@ Path* LeeBase::get_path_back(int x) {
     return kPathBack.at(x);
 }
 
+int LeeBase::get_path_back_size() {
+    return kPathBack.size();
+}
+
 void LeeBase::clear_queues() {
     this->kTraceBackSource.clear();
     this->kTraceBackSink.clear();

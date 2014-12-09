@@ -25,8 +25,6 @@ Ruben::~Ruben() {
 void Ruben::start(Route r) {
     LeeBase::start(r);
 
-    claim("Using Hadlock!", kDebug);
-
     // reset the priority queue for our algorithm
     kWaveFrontSourcePQ = priority_queue<LeeNode, vector<LeeNode>, CompareNodesRuben>();
     kWaveFrontSourcePQ.push(kSource);
