@@ -284,6 +284,7 @@ LeeNode Ruben::calculate_metric(LeeNode c, LeeNode::FoundBy fb) {
 
     temp.set_leewave(calculate_lees_distance(temp));
     temp.set_ruben(temp.get_leewave() + (kKornModifier * calculate_manhattan_distance(temp, opposite_searcher)));
+    temp.set_cost((int) temp.get_ruben());
     temp.set_output((int)temp.get_ruben());
 
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_leewave(temp.get_leewave());

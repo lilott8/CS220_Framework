@@ -104,13 +104,19 @@ int Hadlock::solve_recursive(int iteration) {
     }
     solve_recursive(iteration + 1);
 
+
     // Handle the trace_back generation for the algorithm
-    if (kTraceBackSource.size() > 0 && curr.get_leewave() <= kTraceBackSource.back().get_leewave()
-            && is_adjacent(curr, kTraceBackSource.back())) {
+    if (kTraceBackSource.size() > 0
+            && is_adjacent(curr, kTraceBackSource.back())
+            && curr.get_leewave() <= kTraceBackSource.back().get_leewave()
+            ) {
+        claim("Accepting: " + curr.to_string(), kDebug);
         kTraceBackSource.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
         //PathSegment *ps = new PathSegment(curr.get_coord(), kTraceBackSource.at(kTraceBackSource.size() - 2).get_coord());
         //kPathBack.back()->add_segment(ps);
+    } else {
+        claim("Not Accepting at: " + curr.to_string(), kNote);
     }
 
     return iteration;
@@ -281,11 +287,15 @@ LeeNode Hadlock::calculate_metric(LeeNode curr, LeeNode prev, LeeNode::FoundBy f
             break;
     }
     temp.set_leewave(calculate_lees_distance(temp));
-    double previous_distance = calculate_manhattan_distance(prev, opposite_searcher);
+    temp.set_cost(temp.get_leewave());
+    double previous_distance = calculate_euclidean_distance(prev, opposite_searcher);
 
-    if (calculate_manhattan_distance(temp, opposite_searcher) <= previous_distance) {
+    if (calculate_euclidean_distance(temp, opposite_searcher) <= previous_distance) {
+        //claim("Previous hadlock: " + to_string(prev.get_hadlock()), kNote);
+        //claim(temp.coords_to_string() + "\t " + prev.coords_to_string() + " are the same.", kNote);
         temp.set_hadlock(prev.get_hadlock());
     } else {
+        //claim(temp.coords_to_string() + "\t " + prev.coords_to_string() + " are not the same.", kNote);
         temp.set_hadlock(prev.get_hadlock() + 1);
     }
 
