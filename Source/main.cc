@@ -7,6 +7,7 @@
 #include "../Headers/lee3bit.h"
 #include "../Headers/ruben.h"
 #include "../Headers/hadlock.h"
+#include "../Headers/lee2bit.h"
 
 using std::cerr;
 using std::cout;
@@ -124,7 +125,7 @@ unique_ptr<LeeBase> child_factory(Algorithm a) {
         default:
         case LEE:
             return unique_ptr<LeeOriginal>(new LeeOriginal());
-        //case LEE2BIT: return unique_ptr<Lee2Bit> (new Lee2Bit());
+        case LEE2BIT: return unique_ptr<Lee2Bit> (new Lee2Bit());
         case LEE3BIT: return unique_ptr<Lee3Bit> (new Lee3Bit());
         case RUBEN: return unique_ptr<Ruben> (new Ruben());
         case HADLOCK:
