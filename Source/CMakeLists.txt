@@ -15,6 +15,7 @@ leeoriginal.cc
 lee3bit.cc
 ruben.cc
 hadlock.cc
+lee2bit.cc
 )
 
 add_library(SOURCE_LIB ${LIB_SOURCE})
