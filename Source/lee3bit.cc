@@ -25,33 +25,44 @@ void Lee3Bit::start(Route r) {
 
     claim("Using 3bit!", kWarning);
 
-    if(is_valid()) {
-        kWaveFrontSource.empty();
-        kTraceBackSource.empty();
-        kWaveFrontSource.push_front(kSource);
+    kWaveFrontSource.push_front(kSource);
 
-        Path* p = new Path();
-        p->set_source(kSource.get_coord());
-        p->set_sink(kSink.get_coord());
-        kPathBack.push_back(p);
+    Path* p = new Path();
+    p->set_source(kSource.get_coord());
+    p->set_sink(kSink.get_coord());
+    kPathBack.push_back(p);
 
-        // Solve the problem!
-        if (kBiDirectionEnabled) {
-            kWaveFrontSink.push_front(kSink);
-            solve_recursive_bi_directional(1);
-        } else {
-            solve_recursive(1);
+    // Solve the problem!
+    if (kBiDirectionEnabled) {
+        kWaveFrontSink.push_front(kSink);
+        solve_recursive_bi_directional(1);
+        int x = kTraceBackSource.size()-1;
+        while(x > 0) {
+            if(x-1 > 0) {
+                PathSegment *ps = new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.at(x -1).get_coord());
+                kPathBack.back()->add_segment(ps);
+            } else {
+                PathSegment *ps = new PathSegment(kTraceBackSink.front().get_coord(), kTraceBackSource.at(x).get_coord());
+                kPathBack.back()->add_segment(ps);
+            }
+            x--;
+        }
+        x = kTraceBackSink.size()-1;
+        for(int x = 0;x < kTraceBackSink.size(); x++) {
+            //while(x > 0) {
+            if(x+1 < kTraceBackSink.size()) {
+                PathSegment *ps = new PathSegment(kTraceBackSink.at(x).get_coord(), kTraceBackSink.at(x+1).get_coord());
+                kPathBack.back()->add_segment(ps);
+            }
         }
     } else {
-        claim("We cannot route path: " + r.source.coords_to_string()
-                + ", " + r.sink.coords_to_string(), kWarning);
+        solve_recursive(1);
     }
 }
 
 int Lee3Bit::solve_recursive(int iteration) {
     //claim("Queue size: " + to_string(kWaveFrontSource.size()), kNote);
 
-    // TODO: this base case doesn't trigger
     // Base case 1: Not finding a solution
     if (kWaveFrontSource.size() < 1) {
         claim("We could not successfully route: "
@@ -65,13 +76,13 @@ int Lee3Bit::solve_recursive(int iteration) {
     // pop off the first record
     kWaveFrontSource.pop_front();
 
-    claim("Curr Coordinates: " + curr.to_string(), kNote);
+    //claim("Curr Coordinates: " + curr.to_string(), kNote);
 
     // Base case 2: We found the sink
     if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBackSource.push_back(curr);
-        kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+        //kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
         claim("We found the sink: " + curr.to_string(), kDebug);
         return iteration;
     }
@@ -84,29 +95,29 @@ int Lee3Bit::solve_recursive(int iteration) {
 
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFrontSource.push_back(adjacent.at(x));
-        claim("Adding: " + adjacent.at(x).to_string(), kDebug);
     }
-    if (iteration % 10 == 0) {
+    /*if (iteration % 10 == 0) {
         kMap->print_map();
         claim("=========================", kNote);
-    }
+    }*/
 
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
-    // TODO: Get the pathsegment implemented
     if (kTraceBackSource.size() > 0) {
         if (kTraceBackSource.back().get_cost() == 1) {
             // Handle the 3->1 hand off
             if (curr.get_cost() == 3 && is_adjacent(curr, kTraceBackSource.back())) {
                 kTraceBackSource.push_back(curr);
                 kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+                kTraceBackSource.push_back(curr);
             }
             // Otherwise just decrement as you should
         } else {
             if (curr.get_cost() < kTraceBackSource.back().get_cost() && is_adjacent(curr, kTraceBackSource.back())) {
                 kTraceBackSource.push_back(curr);
                 kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+                kTraceBackSink.push_back(curr);
             }
         }
     }
@@ -136,7 +147,7 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
         //claim("Source is searching: " + curr.to_string(), kNote);
         found_by = LeeNode::FoundBy::FSOURCE;
         if (curr.get_found_by() == LeeNode::FoundBy::FSINK) {
-            claim("We have converged!", kWarning);
+            //claim("We have converged!", kWarning);
             found_intersection = true;
             kTraceBackSource.push_back(curr);
             kTraceBackSink.push_back(curr);
@@ -151,7 +162,7 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
         //claim("Sink is searching: " + curr.to_string(), kNote);
         found_by = LeeNode::FoundBy::FSINK;
         if (curr.get_found_by() == LeeNode::FoundBy::FSOURCE) {
-            claim("We have converged!", kWarning);
+            //claim("We have converged!", kWarning);
             found_intersection = true;
             kTraceBackSink.push_back(curr);
             kTraceBackSource.push_back(curr);
@@ -162,7 +173,7 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
     if (found_intersection) {
         // add the sink to the trace_back
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
-        claim("We found the point of convergence: " + curr.to_string(), kDebug);
+        //claim("We found the point of convergence: " + curr.to_string(), kDebug);
         return iteration;
     }
 
@@ -175,11 +186,11 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
             kWaveFrontSink.push_back(adjacent.at(x));
         }
     }
-    if (iteration % 15 == 0) {
+    /*if (iteration % 15 == 0) {
         claim("This ends iteration " + to_string(iteration), kNote);
         kMap->print_map();
         claim("*************************", kNote);
-    }
+    }*/
 
     //claim("=========================", kNote);
 
@@ -203,7 +214,7 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
                 }
                 // Otherwise just decrement as you should
             } else {
-                if (curr.get_cost() < kTraceBackSource.back().get_cost() && is_adjacent(curr, kTraceBackSource.back())) {
+                if (curr.get_cost() < kTraceBackSource.back().get_lee3bitwave() && is_adjacent(curr, kTraceBackSource.back())) {
                     kTraceBackSource.push_back(curr);
                     kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
                 }
@@ -220,7 +231,7 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
                 }
                 // Otherwise just decrement as you should
             } else {
-                if (curr.get_cost() < kTraceBackSink.back().get_cost() && is_adjacent(curr, kTraceBackSink.back())) {
+                if (curr.get_cost() < kTraceBackSink.back().get_lee3bitwave() && is_adjacent(curr, kTraceBackSink.back())) {
                     kTraceBackSink.push_back(curr);
                     kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
                 }

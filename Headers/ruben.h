@@ -18,6 +18,7 @@ namespace Lee {
     private:
         priority_queue<LeeNode, vector<LeeNode>, CompareNodesRuben> kWaveFrontSourcePQ;
         priority_queue<LeeNode, vector<LeeNode>, CompareNodesRuben> kWaveFrontSinkPQ;
+        LeeNode::FoundBy kFoundByFlag;
         int solve_recursive(int);
 
         int solve_recursive_bi_directional(int);

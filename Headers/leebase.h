@@ -25,7 +25,7 @@ namespace Lee {
         virtual void start(Route);
         virtual void start();
         bool is_valid();
-        string get_path_back();
+        Path* get_path_back(int x);
         void enable_intersections();
 
         void enable_bi_direction();
@@ -50,6 +50,8 @@ namespace Lee {
         vector<Path*> kPathBack;
         vector<LeeNode> kTraceBackSink;
         vector<LeeNode> kTraceBackSource;
+        // Everything will use the kPathBack, this is just a holder for the BD
+        vector<Path*> kPathBackBiDirectional;
         bool kIntersectionEnabled = false;
         bool kBiDirectionEnabled = false;
         bool kValidPlacement;

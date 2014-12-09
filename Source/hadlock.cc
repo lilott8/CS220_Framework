@@ -20,34 +20,46 @@ Hadlock::~Hadlock() {
 void Hadlock::start(Route r) {
     LeeBase::start(r);
 
-    claim("Using Hadlock!", kWarning);
+    claim("Using Hadlock!", kDebug);
 
-    if (is_valid()) {
-        LeeBase::clear_queues();
+    // reset the priority queue for our algorithm
+    kWaveFrontSourcePQ = priority_queue<LeeNode, vector<LeeNode>, CompareNodesHadlock>();
+    kWaveFrontSourcePQ.push(kSource);
+    kWaveFrontSource.push_back(kSource);
+
+    Path *p = new Path();
+    p->set_source(kSource.get_coord());
+    p->set_sink(kSink.get_coord());
+    kPathBack.push_back(p);
+
+    // Solve the problem!
+    if (kBiDirectionEnabled) {
         // reset the priority queue for our algorithm
-        kWaveFrontSourcePQ = priority_queue<LeeNode, vector<LeeNode>, CompareNodesHadlock>();
-
-        kWaveFrontSourcePQ.push(kSource);
-        kWaveFrontSource.push_back(kSource);
-
-        Path *p = new Path();
-        p->set_source(kSource.get_coord());
-        p->set_sink(kSink.get_coord());
-        kPathBack.push_back(p);
-
-        // Solve the problem!
-        if (kBiDirectionEnabled) {
-            // reset the priority queue for our algorithm
-            kWaveFrontSinkPQ = priority_queue<LeeNode, vector<LeeNode>, CompareNodesHadlock>();
-            kWaveFrontSinkPQ.push(kSink);
-            kWaveFrontSink.push_front(kSink);
-            solve_recursive_bi_directional(1);
-        } else {
-            solve_recursive(1);
+        kWaveFrontSinkPQ = priority_queue<LeeNode, vector<LeeNode>, CompareNodesHadlock>();
+        kWaveFrontSinkPQ.push(kSink);
+        kWaveFrontSink.push_front(kSink);
+        solve_recursive_bi_directional(1);
+        int x = kTraceBackSource.size()-1;
+        while(x > 0) {
+            if(x-1 > 0) {
+                PathSegment *ps = new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.at(x -1).get_coord());
+                kPathBack.back()->add_segment(ps);
+            } else {
+                PathSegment *ps = new PathSegment(kTraceBackSink.front().get_coord(), kTraceBackSource.at(x).get_coord());
+                kPathBack.back()->add_segment(ps);
+            }
+            x--;
+        }
+        x = kTraceBackSink.size()-1;
+        for(int x = 0;x < kTraceBackSink.size(); x++) {
+            //while(x > 0) {
+            if(x+1 < kTraceBackSink.size()) {
+                PathSegment *ps = new PathSegment(kTraceBackSink.at(x).get_coord(), kTraceBackSink.at(x+1).get_coord());
+                kPathBack.back()->add_segment(ps);
+            }
         }
     } else {
-        claim("We cannot route path: " + r.source.coords_to_string()
-                + ", " + r.sink.coords_to_string(), kWarning);
+        solve_recursive(1);
     }
 }
 
@@ -71,8 +83,7 @@ int Hadlock::solve_recursive(int iteration) {
     if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBackSource.push_back(curr);
-        kMap->get_map()->at(curr.get_x()).at(curr.get_y())
-                ->set_type(LeeNode::NodeType::TRACEBACK);
+        //kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
         claim("We found the sink!", kDebug);
         return iteration;
     }
@@ -109,6 +120,7 @@ int Hadlock::solve_recursive(int iteration) {
 
 int Hadlock::solve_recursive_bi_directional(int iteration) {
     bool found_intersection = false;
+    //claim("wave front sizes: source: " + to_string(kWaveFrontSourcePQ.size()) + "\t sink: " + to_string(kWaveFrontSinkPQ.size()), kNote);
 
     // Base case 1: Not finding a solution
     if (kWaveFrontSourcePQ.size() < 1 || kWaveFrontSinkPQ.size() < 1) {
@@ -130,7 +142,7 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
         //claim("Source is searching: " + curr.to_string(), kNote);
         found_by = LeeNode::FoundBy::FSOURCE;
         if (curr.get_found_by() == LeeNode::FoundBy::FSINK || is_sink(curr)) {
-            claim("We have converged! source", kWarning);
+            //claim("We have converged! source", kWarning);
             found_intersection = true;
             kFoundByFlag = LeeNode::FoundBy::FSOURCE;
             kTraceBackSource.push_back(curr);
@@ -146,7 +158,7 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
         //claim("Sink is searching: " + curr.to_string(), kNote);
         found_by = LeeNode::FoundBy::FSINK;
         if (curr.get_found_by() == LeeNode::FoundBy::FSOURCE || is_source(curr)) {
-            claim("We have converged! sink", kWarning);
+            //claim("We have converged! sink", kWarning);
             found_intersection = true;
             kFoundByFlag = LeeNode::FoundBy::FSINK;
             kTraceBackSink.push_back(curr);
@@ -158,7 +170,7 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
     if (found_intersection) {
         // add the sink to the trace_back
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
-        claim("We found the point of convergence: " + curr.to_string(), kDebug);
+        //claim("We found the point of convergence: " + curr.to_string(), kDebug);
         return iteration;
     }
 
@@ -174,11 +186,11 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
         }
     }
 
-    /*if (iteration % 1 == 0) {
+    if (iteration % 1 == 0) {
         claim("This ends iteration " + to_string(iteration), kNote);
         kMap->print_map();
         claim("*************************", kNote);
-    }*/
+    }
 
     //claim("=========================", kNote);
 
@@ -191,22 +203,18 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
     solve_recursive_bi_directional(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
-    // TODO: Get the pathsegment implemented
+    //claim("Looking at: " + curr.to_string(), kNote);
     if (iteration % 2 == 0) {
-        if (kTraceBackSource.size() > 0 && curr.get_hadlock() <= kTraceBackSource.back().get_hadlock()
+        if (kTraceBackSource.size() > 0 && curr.get_leewave() <= kTraceBackSource.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSource.back()) && curr.get_found_by() == kFoundByFlag) {
             kTraceBackSource.push_back(curr);
             kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
-            //PathSegment *ps = new PathSegment(curr.get_coord(), kTraceBackSource.at(kTraceBackSource.size() - 2).get_coord());
-            //kPathBack.back()->add_segment(ps);
         }
     } else {
-        if (kTraceBackSink.size() > 0 && curr.get_hadlock() <= kTraceBackSink.back().get_hadlock()
+        if (kTraceBackSink.size() > 0 && curr.get_leewave() <= kTraceBackSink.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSink.back()) && curr.get_found_by() == kFoundByFlag) {
             kTraceBackSink.push_back(curr);
             kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
-            //PathSegment *ps = new PathSegment(curr.get_coord(), kTraceBackSink.at(kTraceBackSink.size() - 2).get_coord());
-            //kPathBack.back()->add_segment(ps);
         }
     }
     return iteration;
@@ -274,6 +282,7 @@ LeeNode Hadlock::calculate_metric(LeeNode curr, LeeNode prev, LeeNode::FoundBy f
             //claim("Opposite searcher is sink", kNote);
             break;
     }
+    temp.set_leewave(calculate_lees_distance(temp));
     double previous_distance = calculate_euclidean_distance(prev, opposite_searcher);
 
     if (calculate_euclidean_distance(temp, opposite_searcher) <= previous_distance) {
@@ -285,7 +294,8 @@ LeeNode Hadlock::calculate_metric(LeeNode curr, LeeNode prev, LeeNode::FoundBy f
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_hadlock(temp.get_hadlock());
     // There is never a time where it will hurt to have this
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_leewave(temp.get_leewave());
-    kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_hadlock());
+    //kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_hadlock());
+    kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_leewave());
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_cost(temp.get_hadlock());
 
     if (kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by() == LeeNode::FoundBy::FNULL) {

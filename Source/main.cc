@@ -49,6 +49,9 @@ int main(int argc,char* argv[]) {
             //claim("We have 6 args", kNote);
             //claim("Setting korn modifier", kDebug);
             korn_modifier = atof(argv[5]);
+            if(korn_modifier < 1.0) {
+                korn_modifier = 1.0;
+            }
         case 5:
             //claim("We have 5 args", kNote);
             //claim("Setting intersection capability", kDebug);
@@ -93,6 +96,7 @@ int main(int argc,char* argv[]) {
 
     // Set the map of our algorithm
     algorithm->set_map(&map);
+    int x = 0;
     //map.print_map();
 
     while(map.get_size_of_routes() > 0) {
@@ -105,9 +109,10 @@ int main(int argc,char* argv[]) {
         //map.print_map();
         // Clear the map out
         map.zero_map();
+        algorithm->get_path_back(x)->print();
+        map.print_map();
+        x++;
     }
-    claim("PathBack: " + algorithm->get_path_back(), kDebug);
-    map.print_map();
 
 	delete first_problem;
 

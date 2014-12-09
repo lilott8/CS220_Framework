@@ -35,11 +35,11 @@ void LeeBase::enable_bi_direction() {
 void LeeBase::start(Route route) {
     // Reset our queues so that previous entries don't show up!
     clear_queues();
-        kSource = route.source;
-        kMap->get_map()->at(kSource.get_x()).at(kSource.get_y())->set_type(LeeNode::NodeType::SOURCE);
+    kSource = route.source;
+    kMap->get_map()->at(kSource.get_x()).at(kSource.get_y())->set_type(LeeNode::NodeType::SOURCE);
 
-        kSink = route.sink;
-        kMap->get_map()->at(kSink.get_x()).at(kSink.get_y())->set_type(LeeNode::NodeType::SINK);
+    kSink = route.sink;
+    kMap->get_map()->at(kSink.get_x()).at(kSink.get_y())->set_type(LeeNode::NodeType::SINK);
 
     //claim("We are starting to run our algorithm", kDebug);
 }
@@ -102,7 +102,7 @@ int LeeBase::calculate_lees_distance(LeeNode c) {
     // (x-1, y)
     if (is_in_bounds(c.get_x() - 1, c.get_y())) {
         answer.push_back(kMap->get_map()
-                 ->at(c.get_x() - 1).at(c.get_y())->get_leewave());
+                ->at(c.get_x() - 1).at(c.get_y())->get_leewave());
     }
     //claim("Our options are:", kDebug);
     int new_low = 0;
@@ -339,7 +339,7 @@ bool LeeBase::is_same_coordinate(LeeNode a, LeeNode b) {
 bool LeeBase::is_valid() {
     return kValidPlacement;
 }
-
+/*
 string LeeBase::get_path_back() {
     string output = "\n";
     for(int x =0; x< kPathBack.size();x++) {
@@ -354,6 +354,10 @@ string LeeBase::get_path_back() {
         output += "\n";
     }
     return output;
+}*/
+
+Path* LeeBase::get_path_back(int x) {
+    return kPathBack.at(x);
 }
 
 void LeeBase::clear_queues() {

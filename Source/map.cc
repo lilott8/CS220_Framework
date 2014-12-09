@@ -42,7 +42,8 @@ Map Map::set_blockages(vector<Blocker> b) {
         width = b.at(x).width;
         start = b.at(x).location;
 
-        if(height + start.x > kWidth || width + start.y > kHeight) {
+        if(width + start.x > kWidth || height + start.y > kHeight) {
+            //claim("width: " + to_string(width) + "\t height: " + to_string(height) + "\t coords: (" + to_string(start.x) + ", " + to_string(start.y) + ")", kNote);
             claim("We cannot create the map: invalid blockage size", kError);
         }
 
