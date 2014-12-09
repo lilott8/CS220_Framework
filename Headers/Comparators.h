@@ -15,7 +15,8 @@ class CompareNodesHadlock {
 public:
     bool operator()(LeeNode &a, LeeNode &b) {
         // do the checking here!
-        return a.get_hadlock() >= b.get_hadlock();
+        return a.get_hadlock()  >= b.get_hadlock();
+        //return true;
     }
 };
 

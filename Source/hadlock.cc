@@ -143,7 +143,7 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
         kWaveFrontSourcePQ.pop();
 
         //claim("Source Queue size: " + to_string(kWaveFrontSourcePQ.size()), kNote);
-        //claim("Source is searching: " + curr.to_string(), kNote);
+        claim("Source: " + curr.to_string(), kNote);
         found_by = LeeNode::FoundBy::FSOURCE;
         if (curr.get_found_by() == LeeNode::FoundBy::FSINK || is_sink(curr)) {
             //claim("We have converged! source", kWarning);
@@ -159,7 +159,7 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
         kWaveFrontSinkPQ.pop();
 
         //claim("Sink Queue size: " + to_string(kWaveFrontSinkPQ.size()), kNote);
-        //claim("Sink is searching: " + curr.to_string(), kNote);
+        claim("Sink  : " + curr.to_string(), kNote);
         found_by = LeeNode::FoundBy::FSINK;
         if (curr.get_found_by() == LeeNode::FoundBy::FSOURCE || is_source(curr)) {
             //claim("We have converged! sink", kWarning);
@@ -190,7 +190,7 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
         }
     }
 
-    if (iteration % 1 == 0) {
+    if (iteration % 25 == 0) {
         claim("This ends iteration " + to_string(iteration), kNote);
         kMap->print_map();
         claim("*************************", kNote);
@@ -235,6 +235,9 @@ vector<LeeNode> Hadlock::get_adjacent_coordinates(LeeNode c, LeeNode::FoundBy fb
         temp.set_y_coord(c.get_y() + 1);
         if (!LeeBase::is_in_vector(temp, fb)) {
             temp = calculate_metric(temp, c, fb);
+            if (temp.get_found_by() != kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by()) {
+                temp.set_found_by(kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by());
+            }
             results.push_back(temp);
         }
     }
@@ -244,6 +247,9 @@ vector<LeeNode> Hadlock::get_adjacent_coordinates(LeeNode c, LeeNode::FoundBy fb
         temp.set_y_coord(c.get_y() - 1);
         if (!LeeBase::is_in_vector(temp, fb)) {
             temp = calculate_metric(temp, c, fb);
+            if (temp.get_found_by() != kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by()) {
+                temp.set_found_by(kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by());
+            }
             results.push_back(temp);
         }
     }
@@ -253,6 +259,9 @@ vector<LeeNode> Hadlock::get_adjacent_coordinates(LeeNode c, LeeNode::FoundBy fb
         temp.set_y_coord(c.get_y());
         if (!LeeBase::is_in_vector(temp, fb)) {
             temp = calculate_metric(temp, c, fb);
+            if (temp.get_found_by() != kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by()) {
+                temp.set_found_by(kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by());
+            }
             results.push_back(temp);
         }
     }
@@ -262,6 +271,9 @@ vector<LeeNode> Hadlock::get_adjacent_coordinates(LeeNode c, LeeNode::FoundBy fb
         temp.set_y_coord(c.get_y());
         if (!LeeBase::is_in_vector(temp, fb)) {
             temp = calculate_metric(temp, c, fb);
+            if (temp.get_found_by() != kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by()) {
+                temp.set_found_by(kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by());
+            }
             results.push_back(temp);
         }
     }
@@ -302,9 +314,9 @@ LeeNode Hadlock::calculate_metric(LeeNode curr, LeeNode prev, LeeNode::FoundBy f
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_hadlock(temp.get_hadlock());
     // There is never a time where it will hurt to have this
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_leewave(temp.get_leewave());
-    //kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_hadlock());
-    kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_leewave());
-    kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_cost(temp.get_hadlock());
+    kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_hadlock());
+    //kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_leewave());
+    kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_cost(temp.get_leewave());
 
     if (kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by() == LeeNode::FoundBy::FNULL) {
         kMap->get_map()->at(temp.get_x()).at(temp.get_y())

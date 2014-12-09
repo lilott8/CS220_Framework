@@ -205,14 +205,14 @@ int Ruben::solve_recursive_bi_directional(int iteration) {
 
     // Handle the trace_back generation for the algorithm
     if (iteration % 2 == 0) {
-        if (kTraceBackSource.size() > 0 && curr.get_ruben() >= kTraceBackSource.back().get_ruben()
+        if (kTraceBackSource.size() > 0 && curr.get_leewave() >= kTraceBackSource.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSource.back()) && curr.get_found_by() == kFoundByFlag) {
             kTraceBackSource.push_back(curr);
             //claim("adding: " + curr.coords_to_string(), kDebug);
             kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
         }
     } else {
-        if (kTraceBackSink.size() > 0 && curr.get_ruben() >= kTraceBackSink.back().get_ruben()
+        if (kTraceBackSink.size() > 0 && curr.get_leewave() >= kTraceBackSink.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSink.back()) && curr.get_found_by() == kFoundByFlag) {
             kTraceBackSink.push_back(curr);
             //claim("adding: " + curr.coords_to_string(), kDebug);
@@ -232,6 +232,9 @@ vector<LeeNode> Ruben::get_adjacent_coordinates(LeeNode c, LeeNode::FoundBy fb) 
         temp.set_y_coord(c.get_y() + 1);
         if (!is_in_vector(temp, fb)) {
             temp = calculate_metric(temp, fb);
+            if (temp.get_found_by() != kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by()) {
+                temp.set_found_by(kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by());
+            }
             results.push_back(temp);
         }
     }
@@ -241,6 +244,9 @@ vector<LeeNode> Ruben::get_adjacent_coordinates(LeeNode c, LeeNode::FoundBy fb) 
         temp.set_y_coord(c.get_y() - 1);
         if (!is_in_vector(temp, fb)) {
             temp = calculate_metric(temp, fb);
+            if (temp.get_found_by() != kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by()) {
+                temp.set_found_by(kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by());
+            }
             results.push_back(temp);
         }
     }
@@ -250,6 +256,9 @@ vector<LeeNode> Ruben::get_adjacent_coordinates(LeeNode c, LeeNode::FoundBy fb) 
         temp.set_y_coord(c.get_y());
         if (!is_in_vector(temp, fb)) {
             temp = calculate_metric(temp, fb);
+            if (temp.get_found_by() != kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by()) {
+                temp.set_found_by(kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by());
+            }
             results.push_back(temp);
         }
     }
@@ -259,6 +268,9 @@ vector<LeeNode> Ruben::get_adjacent_coordinates(LeeNode c, LeeNode::FoundBy fb) 
         temp.set_y_coord(c.get_y());
         if (!is_in_vector(temp, fb)) {
             temp = calculate_metric(temp, fb);
+            if (temp.get_found_by() != kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by()) {
+                temp.set_found_by(kMap->get_map()->at(temp.get_x()).at(temp.get_y())->get_found_by());
+            }
             results.push_back(temp);
         }
     }
