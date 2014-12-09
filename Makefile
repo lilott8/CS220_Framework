@@ -1,7 +1,7 @@
 
 FLAGS=-std=c++11 #added
 SRC=$(filter-out %main.cc, Source/*)
-OBJ=claim.o edge.o grid.o netlist.o node.o path.o pathsegment.o problem_object.o segmentgroup.o leenode.o leeoriginal.o leebase.o ruben.o hadlock.o lee3bit.o map.o
+OBJ=claim.o edge.o grid.o netlist.o node.o path.o pathsegment.o problem_object.o segmentgroup.o leenode.o leeoriginal.o leebase.o ruben.o hadlock.o lee3bit.o map.o lee2bit.o
 
 vpath %.cc Source/
 
@@ -19,3 +19,4 @@ cleanup:
 
 clean: cleanup
 	rm -f grid_router
+
