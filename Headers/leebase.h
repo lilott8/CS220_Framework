@@ -50,9 +50,9 @@ namespace Lee {
         Map *kMap;
         deque<LeeNode> kWaveFrontSource;
         deque<LeeNode> kWaveFrontSink;
-        vector<Path*> kPathBack;
-        vector<LeeNode> kTraceBackSink;
-        vector<LeeNode> kTraceBackSource;
+        deque<Path*> kPathBack;
+        deque<LeeNode> kTraceBackSink;
+        deque<LeeNode> kTraceBackSource;
         // Everything will use the kPathBack, this is just a holder for the BD
         vector<Path*> kPathBackBiDirectional;
         bool kIntersectionEnabled = false;
@@ -61,6 +61,7 @@ namespace Lee {
         double kKornModifier = 1;
 
         void clear_queues();
+        void create_path_back();
 
         bool is_sink(LeeNode);
         bool is_sink(int, int);

@@ -37,41 +37,14 @@ void Hadlock::start(Route r) {
         kWaveFrontSinkPQ.push(kSink);
         kWaveFrontSink.push_front(kSink);
         solve_recursive_bi_directional(1);
-        int x = kTraceBackSource.size()-1;
-        if(!kPathBack.back()->contains(kSource.get_coord())) {
-            kPathBack.back()->add_segment(new PathSegment(kSource.get_coord(), kTraceBackSource.at(x).get_coord()));
-        }
-        while(x > 0) {
-            if(x-1 > 0) {
-                PathSegment *ps = new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.at(x -1).get_coord());
-                kPathBack.back()->add_segment(ps);
-            } else {
-                PathSegment *ps = new PathSegment(kTraceBackSink.front().get_coord(), kTraceBackSource.at(x).get_coord());
-                kPathBack.back()->add_segment(ps);
-            }
-            x--;
-        }
-        x = kTraceBackSink.size()-1;
-        for(int x = 0;x < kTraceBackSink.size(); x++) {
-            //while(x > 0) {
-            if(x+1 < kTraceBackSink.size()) {
-                PathSegment *ps = new PathSegment(kTraceBackSink.at(x).get_coord(), kTraceBackSink.at(x+1).get_coord());
-                kPathBack.back()->add_segment(ps);
-            }
-        }
-        if(!kPathBack.back()->contains(kSink.get_coord())) {
-            kPathBack.back()->add_segment(new PathSegment(kTraceBackSink.at(x).get_coord(), kSink.get_coord()));
+        kTraceBackSource.push_back(kSource);
+        for(int x = 0; x< kTraceBackSink.size();x++) {
+            kTraceBackSource.push_front(kTraceBackSink.at(x));
         }
     } else {
         solve_recursive(1);
-        for(int x = kTraceBackSource.size()-1;x>=0;x--) {
-            if(x-1 >= 0) {
-                kPathBack.back()->add_segment(new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.at(x-1).get_coord()));
-            } else {
-                kPathBack.back()->add_segment(new PathSegment(kTraceBackSource.front().get_coord(), kTraceBackSource.at(x).get_coord()));
-            }
-        }
     }
+    create_path_back();
 }
 
 int Hadlock::solve_recursive(int iteration) {
@@ -94,8 +67,7 @@ int Hadlock::solve_recursive(int iteration) {
     if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBackSource.push_back(curr);
-        //kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
-        claim("We found the sink!", kDebug);
+        //claim("We found the sink!", kDebug);
         return iteration;
     }
 
@@ -111,12 +83,7 @@ int Hadlock::solve_recursive(int iteration) {
         kWaveFrontSource.push_back(adjacent.at(x));
     }
 
-    /*if (iteration % 10 == 0) {
-        claim("******************************", kDebug);
-        kMap->print_map();
-    }*/
     solve_recursive(iteration + 1);
-
 
     // Handle the trace_back generation for the algorithm
     if (kTraceBackSource.size() > 0
@@ -124,9 +91,10 @@ int Hadlock::solve_recursive(int iteration) {
             && curr.get_leewave() <= kTraceBackSource.back().get_leewave()
             ) {
         kTraceBackSource.push_back(curr);
-        kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
-        //PathSegment *ps = new PathSegment(curr.get_coord(), kTraceBackSource.at(kTraceBackSource.size() - 2).get_coord());
-        //kPathBack.back()->add_segment(ps);
+        if(kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SINK &&
+                kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SOURCE) {
+            kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+        }
     }
 
     return iteration;
@@ -200,35 +168,26 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
         }
     }
 
-    /*if (iteration % 25 == 0) {
-        claim("This ends iteration " + to_string(iteration), kNote);
-        kMap->print_map();
-        claim("*************************", kNote);
-    }*/
-
-    //claim("=========================", kNote);
-
-    /*if (iteration > 25) {
-        claim("Leaving after N iterations", kWarning);
-        claim(LeeNode::convert_found_by_to_string(found_by) + " is searching for: " + curr.to_string(), kWarning);
-        return iteration;
-    }*/
-
     solve_recursive_bi_directional(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
-    //claim("Looking at: " + curr.to_string(), kNote);
     if (iteration % 2 == 0) {
         if (kTraceBackSource.size() > 0 && curr.get_leewave() <= kTraceBackSource.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSource.back()) && curr.get_found_by() == kFoundByFlag) {
             kTraceBackSource.push_back(curr);
-            kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+            if(kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SINK &&
+                    kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SOURCE) {
+                kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+            }
         }
     } else {
         if (kTraceBackSink.size() > 0 && curr.get_leewave() <= kTraceBackSink.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSink.back()) && curr.get_found_by() == kFoundByFlag) {
             kTraceBackSink.push_back(curr);
-            kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+            if(kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SINK &&
+                    kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SOURCE) {
+                kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+            }
         }
     }
     return iteration;

@@ -406,3 +406,10 @@ bool LeeBase::is_in_vector(LeeNode c, LeeNode::FoundBy fb) {
             break;
     }
 }
+
+void LeeBase::create_path_back() {
+    for(int x=0; x < kTraceBackSource.size();x++) {
+        claim(kTraceBackSource.at(x).coords_to_string(), kNote);
+    }
+
+}
