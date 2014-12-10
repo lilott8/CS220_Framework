@@ -27,6 +27,14 @@ Map::Map(int height, int width) {
     initialize_map(height, width);
 }
 
+Map::Map(ProblemObject *po) {
+    kHeight = po->get_height();
+    kWidth = po->get_width();
+    initialize_map(kHeight, kWidth);
+    set_blockages(po->get_blockers());
+    set_sources_and_sinks(po->get_connections());
+}
+
 Map::~Map() {
 
 }

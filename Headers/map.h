@@ -25,13 +25,12 @@ public:
     // Constructors
     Map();
     Map(int, int);
+    Map(ProblemObject*);
     ~Map();
 
     // Methods
     vector<vector<LeeNode*> > *get_map();
     Route get_next_route();
-    Map set_blockages(vector<Blocker>);
-    Map set_sources_and_sinks(vector<Connection>);
     void print_map();
     void print_connections();
     int get_size_of_routes();
@@ -43,6 +42,8 @@ public:
 private:
     // Methods
     void initialize_map(int, int);
+    Map set_blockages(vector<Blocker>);
+    Map set_sources_and_sinks(vector<Connection>);
     // Variables
     vector<vector<LeeNode*> > kMap;
     deque<Connection> kConnections;

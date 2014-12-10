@@ -93,14 +93,11 @@ int main(int argc,char* argv[]) {
 
     claim("Working on problem: " + first_problem->get_name(), kNote);
     // Initializing a new map to project our solution on
-    Map map = Map(first_problem->get_width(), first_problem->get_height());
-    map.set_blockages(first_problem->get_blockers());
-    map.set_sources_and_sinks(first_problem->get_connections());
+    Map map = Map(first_problem);
 
     // Set the map of our algorithm
     algorithm->set_map(&map);
     int x = 0;
-    //map.print_map();
 
     while(map.get_size_of_routes() > 0) {
         // Get the next route
@@ -109,7 +106,6 @@ int main(int argc,char* argv[]) {
         // Solve the route
         algorithm->start(work);
         claim("=========================", kDebug);
-        //map.print_map();
         // Clear the map out
         map.zero_map();
         if(x < algorithm->get_path_back_size()) {
