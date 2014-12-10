@@ -36,6 +36,8 @@ void LeeOriginal::start(Route r) {
     } else {
         solve_recursive(1);
     }
+    kMap->zero_map();
+    kMap->print_map();
     create_path_back();
 }
 

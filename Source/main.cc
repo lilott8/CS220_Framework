@@ -108,10 +108,10 @@ int main(int argc,char* argv[]) {
         claim("=========================", kDebug);
         // Clear the map out
         map.zero_map();
+        map.print_map();
         if(x < algorithm->get_path_back_size()) {
             algorithm->get_path_back(x)->print();
         }
-        map.print_map();
         x++;
     }
 

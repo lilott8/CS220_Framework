@@ -408,8 +408,33 @@ bool LeeBase::is_in_vector(LeeNode c, LeeNode::FoundBy fb) {
 }
 
 void LeeBase::create_path_back() {
-    for(int x=0; x < kTraceBackSource.size();x++) {
-        claim(kTraceBackSource.at(x).coords_to_string(), kNote);
-    }
+    LeeNode start = kTraceBackSource.front();
 
+    claim("Size of deque: " + to_string(kTraceBackSource.size()), kNote);
+
+    // We start at 1 because we already have "start" as 0
+    for(int x=1; x < kTraceBackSource.size();x++) {
+        claim(kTraceBackSource.at(x).coords_to_string(), kNote);
+        while(start.get_x() == kTraceBackSource.at(x).get_x()) {
+            x+=1;
+        }
+        claim("x is: " + to_string(x), kNote);
+        claim("xElement at " + to_string(x) + " is: " + kTraceBackSource.at(x).coords_to_string(), kDebug);
+        if(x < kTraceBackSource.size()) {
+            claim("x is: " + to_string(x), kNote);
+            //claim("Attempting to create a ps of:" + start.coords_to_string() + "\t " + kTraceBackSource.at(x - 1).coords_to_string(), kNote);
+            //kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.at(x - 1).get_coord()));
+            start = kTraceBackSource.at(x - 1);
+        }
+        while(start.get_y() == kTraceBackSource.at(x).get_y()) {
+            x+=1;
+        }
+        claim("x is: " + to_string(x), kNote);
+        claim("yElement at " + to_string(x) + "is: " + kTraceBackSource.at(x).coords_to_string(), kDebug);
+        if(x < kTraceBackSource.size()) {
+            //claim("Attempting to create a ps of:" + start.coords_to_string() + "\t " + kTraceBackSource.at(x - 1).coords_to_string(), kNote);
+            //kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.at(x - 1).get_coord()));
+            start = kTraceBackSource.at(x - 1);
+        }
+    }
 }
