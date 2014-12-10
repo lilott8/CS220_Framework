@@ -32,6 +32,13 @@
       "source_y": 19,
       "sink_x": 19,
       "sink_y": 0
+    },
+    {
+      "name": "route2",
+      "source_x": 1,
+      "source_y": 4,
+      "sink_x": 19,
+      "sink_y": 8
     }
   ]
 }

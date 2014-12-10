@@ -26,22 +26,27 @@ namespace Lee {
         // Make sure child classes can get access to these!
         virtual void start(Route);
         virtual void start();
-        bool is_valid();
-        Path* get_path_back(int x);
-        void enable_intersections();
+        Path* get_path_back_element(int x);
+        deque<Path*> get_path_back();
 
+        void enable_intersections();
         void enable_bi_direction();
         void set_korn(double);
-        double get_korn();
 
         int calculate_manhattan_distance(int, int);
         int calculate_manhattan_distance(LeeNode, LeeNode);
         int calculate_lees_distance(LeeNode);
         int caclulate_euclidean_distance(int, int);
-        double calculate_euclidean_distance(LeeNode, LeeNode);
-        bool is_adjacent(LeeNode, LeeNode);
-        static bool is_same_coordinate(LeeNode, LeeNode);
         int get_path_back_size();
+
+        double calculate_euclidean_distance(LeeNode, LeeNode);
+        double get_korn();
+
+        bool get_routed_status();
+        bool is_valid();
+        bool is_adjacent(LeeNode, LeeNode);
+
+        static bool is_same_coordinate(LeeNode, LeeNode);
 
     protected:
         // appease the compiler...
@@ -53,11 +58,10 @@ namespace Lee {
         deque<Path*> kPathBack;
         deque<LeeNode> kTraceBackSink;
         deque<LeeNode> kTraceBackSource;
-        // Everything will use the kPathBack, this is just a holder for the BD
-        vector<Path*> kPathBackBiDirectional;
         bool kIntersectionEnabled = false;
         bool kBiDirectionEnabled = false;
         bool kValidPlacement;
+        bool successful_routing = false;
         double kKornModifier = 1;
 
         void clear_queues();

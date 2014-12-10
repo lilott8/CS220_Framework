@@ -35,6 +35,7 @@ void LeeBase::enable_bi_direction() {
 void LeeBase::start(Route route) {
     // Reset our queues so that previous entries don't show up!
     clear_queues();
+    successful_routing = false;
     kSource = route.source;
     kMap->get_map()->at(kSource.get_x()).at(kSource.get_y())->set_type(LeeNode::NodeType::SOURCE);
 
@@ -372,8 +373,12 @@ string LeeBase::get_path_back() {
     return output;
 }*/
 
-Path* LeeBase::get_path_back(int x) {
+Path* LeeBase::get_path_back_element(int x) {
     return kPathBack.at(x);
+}
+
+deque<Path*> LeeBase::get_path_back() {
+    return kPathBack;
 }
 
 int LeeBase::get_path_back_size() {
@@ -408,33 +413,44 @@ bool LeeBase::is_in_vector(LeeNode c, LeeNode::FoundBy fb) {
 }
 
 void LeeBase::create_path_back() {
+    // start with the source
+    reverse(kTraceBackSource.begin(), kTraceBackSource.end());
+
     LeeNode start = kTraceBackSource.front();
 
-    claim("Size of deque: " + to_string(kTraceBackSource.size()), kNote);
+    int size = (int)kTraceBackSource.size()-1;
 
     // We start at 1 because we already have "start" as 0
-    for(int x=1; x < kTraceBackSource.size();x++) {
-        claim(kTraceBackSource.at(x).coords_to_string(), kNote);
-        while(start.get_x() == kTraceBackSource.at(x).get_x()) {
+    int x = 1;
+    while(x < size) {
+
+        // Look for x-axis changes
+        while(start.get_x() == kTraceBackSource.at(x).get_x() && x < size) {
+            // move through the deque until we have an element in which the y-axis changes
             x+=1;
         }
-        claim("x is: " + to_string(x), kNote);
-        claim("xElement at " + to_string(x) + " is: " + kTraceBackSource.at(x).coords_to_string(), kDebug);
-        if(x < kTraceBackSource.size()) {
-            claim("x is: " + to_string(x), kNote);
-            //claim("Attempting to create a ps of:" + start.coords_to_string() + "\t " + kTraceBackSource.at(x - 1).coords_to_string(), kNote);
-            //kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.at(x - 1).get_coord()));
-            start = kTraceBackSource.at(x - 1);
+        //claim("Attempting to create a ps of:" + start.coords_to_string() + "\t " + kTraceBackSource.at(x-1).coords_to_string(), kNote);
+        if(x == size) {
+            kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.back().get_coord()));
+        } else {
+            kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.at(x - 1).get_coord()));
         }
-        while(start.get_y() == kTraceBackSource.at(x).get_y()) {
+        start = kTraceBackSource.at(x-1);
+        // Look for y-axis changes
+        while(start.get_y() == kTraceBackSource.at(x).get_y() && x < size) {
+            // move through the deque until we have an element in which the x-axis changes
             x+=1;
         }
-        claim("x is: " + to_string(x), kNote);
-        claim("yElement at " + to_string(x) + "is: " + kTraceBackSource.at(x).coords_to_string(), kDebug);
-        if(x < kTraceBackSource.size()) {
-            //claim("Attempting to create a ps of:" + start.coords_to_string() + "\t " + kTraceBackSource.at(x - 1).coords_to_string(), kNote);
-            //kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.at(x - 1).get_coord()));
-            start = kTraceBackSource.at(x - 1);
+        //claim("Attempting to create a ps of:" + start.coords_to_string() + "\t " + kTraceBackSource.at(x-1).coords_to_string(), kNote);
+        if(x == size) {
+            kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.back().get_coord()));
+        } else {
+            kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.at(x - 1).get_coord()));
         }
+        start = kTraceBackSource.at(x-1);
     }
+}
+
+bool LeeBase::get_routed_status() {
+    return successful_routing;
 }

@@ -1,0 +1,16 @@
+{
+  "file_name": "fails",
+
+  "height": 20,
+  "width": 20,
+
+
+  "blockerList": [
+    {"name": "blocker1", "width": 10, "height": 10, "x": 4, "y": 4}
+  ],
+
+  "routeList": [
+    {"name": "route1", "source_x": 10, "source_y": 0, "sink_x": 10, "sink_y": 19},
+    {"name": "route2", "source_x": 5, "source_y": 5, "sink_x": 19, "sink_y": 10}
+  ]
+}

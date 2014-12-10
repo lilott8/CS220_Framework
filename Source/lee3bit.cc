@@ -43,8 +43,9 @@ void Lee3Bit::start(Route r) {
         solve_recursive(1);
 
     }
-    create_path_back();
-
+    if(kTraceBackSource.size() > 0) {
+        create_path_back();
+    }
 }
 
 int Lee3Bit::solve_recursive(int iteration) {
@@ -55,6 +56,7 @@ int Lee3Bit::solve_recursive(int iteration) {
         claim("We could not successfully route: "
                 + kSource.coords_to_string() + "->"
                 + kSink.coords_to_string(), kWarning);
+        clear_queues();
         return iteration;
     }
 
@@ -69,6 +71,7 @@ int Lee3Bit::solve_recursive(int iteration) {
     if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBackSource.push_back(curr);
+        successful_routing = true;
         //kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
         //claim("We found the sink: " + curr.to_string(), kDebug);
         return iteration;
@@ -120,10 +123,11 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
     bool found_intersection = false;
 
     // Base case 1: Not finding a solution
-    if (kWaveFrontSource.size() < 1 && kWaveFrontSink.size() < 1) {
+    if (kWaveFrontSource.size() < 1 || kWaveFrontSink.size() < 1) {
         claim("We could not successfully route: "
                 + kSource.coords_to_string() + "->"
                 + kSink.coords_to_string(), kWarning);
+        clear_queues();
         return iteration;
     }
 
@@ -165,6 +169,7 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
     if (found_intersection) {
         // add the sink to the trace_back
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+        successful_routing = true;
         //claim("We found the point of convergence: " + curr.to_string(), kDebug);
         return iteration;
     }
@@ -185,9 +190,9 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
     if (iteration % 2 == 0) {
         // Handle the trace_back generation for the algorithm
         if (kTraceBackSource.size() > 0) {
-            if (kTraceBackSource.back().get_cost() == 1) {
+            if (kTraceBackSource.back().get_lee3bitwave() == 1) {
                 // Handle the 3->1 hand off
-                if (curr.get_cost() == 3 && is_adjacent(curr, kTraceBackSource.back())) {
+                if (curr.get_lee3bitwave() == 3 && is_adjacent(curr, kTraceBackSource.back())) {
                     kTraceBackSource.push_back(curr);
                     if(kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SINK &&
                             kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SOURCE) {
@@ -196,7 +201,7 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
                 }
                 // Otherwise just decrement as you should
             } else {
-                if (curr.get_cost() < kTraceBackSource.back().get_lee3bitwave() && is_adjacent(curr, kTraceBackSource.back())) {
+                if (curr.get_lee3bitwave() < kTraceBackSource.back().get_lee3bitwave() && is_adjacent(curr, kTraceBackSource.back())) {
                     kTraceBackSource.push_back(curr);
                     if(kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SINK &&
                             kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SOURCE) {
@@ -208,9 +213,9 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
     } else {
         // Handle the trace_back generation for the algorithm
         if (kTraceBackSink.size() > 0) {
-            if (kTraceBackSink.back().get_cost() == 1) {
+            if (kTraceBackSink.back().get_lee3bitwave() == 1) {
                 // Handle the 3->1 hand off
-                if (curr.get_cost() == 3 && is_adjacent(curr, kTraceBackSink.back())) {
+                if (curr.get_lee3bitwave() == 3 && is_adjacent(curr, kTraceBackSink.back())) {
                     kTraceBackSink.push_back(curr);
                     if(kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SINK &&
                             kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SOURCE) {
@@ -219,7 +224,7 @@ int Lee3Bit::solve_recursive_bi_directional(int iteration) {
                 }
                 // Otherwise just decrement as you should
             } else {
-                if (curr.get_cost() < kTraceBackSink.back().get_lee3bitwave() && is_adjacent(curr, kTraceBackSink.back())) {
+                if (curr.get_lee3bitwave() < kTraceBackSink.back().get_lee3bitwave() && is_adjacent(curr, kTraceBackSink.back())) {
                     kTraceBackSink.push_back(curr);
                     if(kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SINK &&
                             kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SOURCE) {

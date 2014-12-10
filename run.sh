@@ -25,11 +25,13 @@ do
         for k in "${KORN[@]}"
         do
           COMMAND="./grid_router "$TEST_FILE$SPACE$a$SPACE$d$SPACE$i$SPACE$k
-          echo $COMMAND
+          echo ${COMMAND}
+          "${COMMAND}"
         done
       else
         COMMAND="./grid_router "$TEST_FILE$SPACE$a$SPACE$d$SPACE$i
-        echo $COMMAND
+        echo ${COMMAND}
+          "${COMMAND}"
       fi
     done
   done

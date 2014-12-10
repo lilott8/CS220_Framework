@@ -44,8 +44,9 @@ void Hadlock::start(Route r) {
     } else {
         solve_recursive(1);
     }
-    create_path_back();
-}
+    if(kTraceBackSource.size() > 0) {
+        create_path_back();
+    }}
 
 int Hadlock::solve_recursive(int iteration) {
 
@@ -55,6 +56,7 @@ int Hadlock::solve_recursive(int iteration) {
         claim("We could not successfully route: "
                 + kSource.coords_to_string() + "->"
                 + kSink.coords_to_string(), kWarning);
+        clear_queues();
         return iteration;
     }
 
@@ -67,6 +69,7 @@ int Hadlock::solve_recursive(int iteration) {
     if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBackSource.push_back(curr);
+        successful_routing = true;
         //claim("We found the sink!", kDebug);
         return iteration;
     }
@@ -109,6 +112,7 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
         claim("We could not successfully route: "
                 + kSource.coords_to_string() + "->"
                 + kSink.coords_to_string(), kWarning);
+        clear_queues();
         return iteration;
     }
 
@@ -152,6 +156,7 @@ int Hadlock::solve_recursive_bi_directional(int iteration) {
     if (found_intersection) {
         // add the sink to the trace_back
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
+        successful_routing = true;
         //claim("We found the point of convergence: " + curr.to_string(), kDebug);
         return iteration;
     }

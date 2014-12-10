@@ -72,8 +72,11 @@ Map Map::set_blockages(vector<Blocker> b) {
 Map Map::set_sources_and_sinks(vector<Connection> v) {
     int y,z;
     Route route;
+    bool legal_placement = true;
 
     for(int x = 0;x < v.size();x++) {
+        // Always belive the input is true.
+        legal_placement = true;
 
         // Declare the source(s)
         LeeNode temp = LeeNode(v.at(x).source);
@@ -85,7 +88,15 @@ Map Map::set_sources_and_sinks(vector<Connection> v) {
         // Check for incorrect placement
         if(route.source.get_x() < 0 || route.source.get_y() < 0
                 || route.source.get_x() >= kWidth || route.source.get_y() >= kHeight) {
-            claim("We cannot route: " + route.source.coords_to_string() + ": out of bounds placement", kWarning);
+            claim("We cannot route: " + route.source.coords_to_string() + " -> "
+                    + route.sink.coords_to_string() + ": out of bounds placement", kWarning);
+            continue;
+        }
+
+        // Check for trying to place something over another route
+        if(kMap.at(route.source.get_x()).at(route.source.get_y())->get_type() != LeeNode::NodeType::NONE) {
+            claim("We cannot route: " + route.source.coords_to_string() + " -> "
+                    + route.sink.coords_to_string() + ": illegal placement", kWarning);
             continue;
         }
 
@@ -99,17 +110,25 @@ Map Map::set_sources_and_sinks(vector<Connection> v) {
         // check for incorrect placement
         if(route.sink.get_x() < 0 || route.sink.get_y() < 0
                 || route.sink.get_x() >= kWidth || route.sink.get_y() >= kHeight) {
-            claim("We cannot route: " + route.sink.coords_to_string() + ": out of bounds placement", kWarning);
+            claim("We cannot route: " + route.source.coords_to_string() + " -> "
+                    + route.sink.coords_to_string() + ": out of bounds placement", kWarning);
+            continue;
+        }
+        if(kMap.at(route.sink.get_x()).at(route.sink.get_y())->get_type() != LeeNode::NodeType::NONE) {
+            claim("We cannot route: " + route.source.coords_to_string() + " -> "
+                    + route.sink.coords_to_string() + ": illegal placement", kWarning);
             continue;
         }
 
 
         // Add our connections
         if(!LeeBase::is_same_coordinate(route.source, route.sink)) {
-            kConnections.push_back(v.at(x));
-            kRoutes.push_back(route);
-            kMap.at(route.sink.get_x()).at(route.sink.get_y())->set_type(LeeNode::NodeType::SINK);
-            kMap.at(route.source.get_x()).at(route.source.get_y())->set_type(LeeNode::NodeType::SOURCE);
+            if(legal_placement) {
+                kConnections.push_back(v.at(x));
+                kRoutes.push_back(route);
+                kMap.at(route.sink.get_x()).at(route.sink.get_y())->set_type(LeeNode::NodeType::SINK);
+                kMap.at(route.source.get_x()).at(route.source.get_y())->set_type(LeeNode::NodeType::SOURCE);
+            }
         } else {
             claim(route.source.coords_to_string() + " is the same as it's sink, thus unroutable", kWarning);
         }
@@ -144,8 +163,8 @@ void Map::print_connections() {
 
 string Map::connection_to_string(Route c) {
     string output = "\n";
-        output += "Source: " + c.source.to_string() + "\n";
-        output += "Sink: " + c.sink.to_string();
+        output += "Source: " + c.source.coords_to_string() + " -> ";
+        output += "Sink: " + c.sink.coords_to_string();
     return output;
 }
 

@@ -94,6 +94,7 @@ int main(int argc,char* argv[]) {
     claim("Working on problem: " + first_problem->get_name(), kNote);
     // Initializing a new map to project our solution on
     Map map = Map(first_problem);
+    //map.print_map();
 
     // Set the map of our algorithm
     algorithm->set_map(&map);
@@ -105,13 +106,16 @@ int main(int argc,char* argv[]) {
         claim("Working on a new connection: " + map.connection_to_string(work), kNote);
         // Solve the route
         algorithm->start(work);
-        claim("=========================", kDebug);
         // Clear the map out
-        map.zero_map();
-        map.print_map();
-        if(x < algorithm->get_path_back_size()) {
-            algorithm->get_path_back(x)->print();
+        //map.zero_map();
+        //map.print_map();
+        if(algorithm->get_routed_status()) {
+            claim("A valid route: ", kNote);
+            algorithm->get_path_back().back()->print();
+        } else {
+            claim("We could not find a valid route", kDebug);
         }
+        claim("=========================", kDebug);
         x++;
     }
 
