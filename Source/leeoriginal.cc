@@ -31,6 +31,9 @@ void LeeOriginal::start(Route r) {
         kWaveFrontSink.push_front(kSink);
         solve_recursive_bi_directional(1);
         int x = kTraceBackSource.size()-1;
+        if(!kPathBack.back()->contains(kSource.get_coord())) {
+            kPathBack.back()->add_segment(new PathSegment(kSource.get_coord(), kTraceBackSource.at(x).get_coord()));
+        }
         while(x > 0) {
             if(x-1 > 0) {
                 PathSegment *ps = new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.at(x -1).get_coord());
@@ -49,8 +52,18 @@ void LeeOriginal::start(Route r) {
                 kPathBack.back()->add_segment(ps);
             }
         }
+        if(!kPathBack.back()->contains(kSink.get_coord())) {
+            kPathBack.back()->add_segment(new PathSegment(kTraceBackSink.at(x).get_coord(), kSink.get_coord()));
+        }
     } else {
         solve_recursive(1);
+        for(int x = kTraceBackSource.size()-1;x>=0;x--) {
+            if(x-1 >= 0) {
+                kPathBack.back()->add_segment(new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.at(x-1).get_coord()));
+            } else {
+                kPathBack.back()->add_segment(new PathSegment(kTraceBackSource.front().get_coord(), kTraceBackSource.at(x).get_coord()));
+            }
+        }
     }
 }
 
@@ -100,12 +113,12 @@ int LeeOriginal::solve_recursive(int iteration) {
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
-    if (kTraceBackSource.size() > 0 && curr.get_cost() <= kTraceBackSource.back().get_cost()
+    if (kTraceBackSource.size() > 0 && curr.get_leewave() <= kTraceBackSource.back().get_cost()
             && is_adjacent(curr, kTraceBackSource.back())) {
         kTraceBackSource.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
-        PathSegment *ps = new PathSegment(curr.get_coord(), kTraceBackSource.at(kTraceBackSource.size() - 2).get_coord());
-        kPathBack.back()->add_segment(ps);
+        //PathSegment *ps = new PathSegment(kTraceBackSource.at(kTraceBackSource.size() - 2).get_coord(), curr.get_coord());
+        //kPathBack.back()->add_segment(ps);
     }
     return iteration;
 }

@@ -29,6 +29,7 @@ void Ruben::start(Route r) {
     kWaveFrontSourcePQ = priority_queue<LeeNode, vector<LeeNode>, CompareNodesRuben>();
     kWaveFrontSourcePQ.push(kSource);
     kWaveFrontSource.push_back(kSource);
+    //kTraceBackSource.push_back(kSource);
 
     Path *p = new Path();
     p->set_source(kSource.get_coord());
@@ -43,6 +44,9 @@ void Ruben::start(Route r) {
         kWaveFrontSink.push_front(kSink);
         solve_recursive_bi_directional(1);
         int x = kTraceBackSource.size()-1;
+        if(!kPathBack.back()->contains(kSource.get_coord())) {
+            kPathBack.back()->add_segment(new PathSegment(kSource.get_coord(), kTraceBackSource.at(x).get_coord()));
+        }
         while(x > 0) {
             if(x-1 > 0) {
                 PathSegment *ps = new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.at(x -1).get_coord());
@@ -61,8 +65,19 @@ void Ruben::start(Route r) {
                 kPathBack.back()->add_segment(ps);
             }
         }
+        if(!kPathBack.back()->contains(kSink.get_coord())) {
+            kPathBack.back()->add_segment(new PathSegment(kTraceBackSink.at(x).get_coord(), kSink.get_coord()));
+        }
     } else {
         solve_recursive(1);
+
+        for(int x = kTraceBackSource.size()-1;x>=0;x--) {
+            if(x-1 >= 0) {
+                kPathBack.back()->add_segment(new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.at(x-1).get_coord()));
+            } else {
+                kPathBack.back()->add_segment(new PathSegment(kTraceBackSource.front().get_coord(), kTraceBackSource.at(x).get_coord()));
+            }
+        }
     }
 }
 
@@ -113,8 +128,8 @@ int Ruben::solve_recursive(int iteration) {
             && is_adjacent(curr, kTraceBackSource.back())) {
         kTraceBackSource.push_back(curr);
         kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
-        PathSegment *ps = new PathSegment(curr.get_coord(), kTraceBackSource.at(kTraceBackSource.size() - 2).get_coord());
-        kPathBack.back()->add_segment(ps);
+        //PathSegment *ps = new PathSegment(curr.get_coord(), kTraceBackSource.at(kTraceBackSource.size() - 2).get_coord());
+        //kPathBack.back()->add_segment(ps);
     }
     return iteration;
 }
@@ -140,7 +155,7 @@ int Ruben::solve_recursive_bi_directional(int iteration) {
         kWaveFrontSourcePQ.pop();
 
         //claim("Source Queue size: " + to_string(kWaveFrontSourcePQ.size()), kNote);
-        //claim("Source is searching: " + curr.to_string(), kNote);
+        //claim("Source: " + curr.to_string(), kNote);
         found_by = LeeNode::FoundBy::FSOURCE;
         if (curr.get_found_by() == LeeNode::FoundBy::FSINK || is_sink(curr)) {
             //claim("We have converged! source", kWarning);
@@ -156,7 +171,7 @@ int Ruben::solve_recursive_bi_directional(int iteration) {
         kWaveFrontSinkPQ.pop();
 
         //claim("Sink Queue size: " + to_string(kWaveFrontSinkPQ.size()), kNote);
-        //claim("Sink is searching: " + curr.to_string(), kNote);
+        //claim("Sink  : " + curr.to_string(), kNote);
         found_by = LeeNode::FoundBy::FSINK;
         if (curr.get_found_by() == LeeNode::FoundBy::FSOURCE || is_source(curr)) {
             //claim("We have converged! sink", kWarning);
@@ -187,11 +202,11 @@ int Ruben::solve_recursive_bi_directional(int iteration) {
         }
     }
 
-    if (iteration % 2 == 0) {
+    /*if (iteration % 5 == 0) {
         claim("This ends iteration " + to_string(iteration), kNote);
         kMap->print_map();
         claim("*************************", kNote);
-    }
+    }*/
 
     //claim("=========================", kNote);
 
@@ -205,14 +220,14 @@ int Ruben::solve_recursive_bi_directional(int iteration) {
 
     // Handle the trace_back generation for the algorithm
     if (iteration % 2 == 0) {
-        if (kTraceBackSource.size() > 0 && curr.get_leewave() >= kTraceBackSource.back().get_leewave()
+        if (kTraceBackSource.size() > 0 && curr.get_leewave() <= kTraceBackSource.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSource.back()) && curr.get_found_by() == kFoundByFlag) {
             kTraceBackSource.push_back(curr);
             //claim("adding: " + curr.coords_to_string(), kDebug);
             kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
         }
     } else {
-        if (kTraceBackSink.size() > 0 && curr.get_leewave() >= kTraceBackSink.back().get_leewave()
+        if (kTraceBackSink.size() > 0 && curr.get_leewave() <= kTraceBackSink.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSink.back()) && curr.get_found_by() == kFoundByFlag) {
             kTraceBackSink.push_back(curr);
             //claim("adding: " + curr.coords_to_string(), kDebug);
@@ -300,8 +315,8 @@ LeeNode Ruben::calculate_metric(LeeNode c, LeeNode::FoundBy fb) {
     temp.set_output((int)temp.get_ruben());
 
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_leewave(temp.get_leewave());
-    //kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_leewave());
-    kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output((int) temp.get_ruben());
+    kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output(temp.get_leewave());
+    //kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_output((int) temp.get_ruben());
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_ruben(temp.get_ruben());
     kMap->get_map()->at(temp.get_x()).at(temp.get_y())->set_cost(temp.get_leewave());
 

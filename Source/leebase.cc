@@ -120,9 +120,9 @@ int LeeBase::calculate_lees_distance(LeeNode c) {
 }
 
 bool LeeBase::is_adjacent(LeeNode a, LeeNode b) {
-    if (a.get_cost() == 0) {
+    /*if (a.get_cost() == 0) {
         return true;
-    }
+    }*/
     int delta_x, delta_y;
     double result = calculate_manhattan_distance(a, b);
 
@@ -186,19 +186,20 @@ bool LeeBase::is_placeable_no_intersection(int x, int y) {
     if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
         return false;
     }
+    if(is_source(x, y)) {
+        return true;
+    }
+    if(is_sink(x, y)) {
+        return true;
+    }
     // check with the node itself if it's placeable, it knows
     if(!kMap->get_map()->at(x).at(y)->is_placeable()) {
         return false;
     }
-    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::BLOCKED) {
+    if(kMap->get_map()->at(x).at(y)->get_type() != LeeNode::NONE) {
         return false;
     }
-    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SOURCE) {
-        return false;
-    }
-    if(kMap->get_map()->at(x).at(y)->get_type() == LeeNode::TRACEBACK) {
-        return false;
-    }
+
     return true;
 }
 
@@ -214,6 +215,14 @@ bool LeeBase::is_placeable_intersection(int x, int y) {
     if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
         return false;
     }
+    // Grab these if they are the current element source/sink
+    if(is_source(x, y)) {
+        return true;
+    }
+    if(is_sink(x, y)) {
+        return true;
+    }
+
     // check with the node itself if it's placeable, it knows
     if(!kMap->get_map()->at(x).at(y)->is_placeable()) {
         return false;
@@ -222,6 +231,9 @@ bool LeeBase::is_placeable_intersection(int x, int y) {
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SOURCE) {
+        return false;
+    }
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SINK) {
         return false;
     }
     return true;
@@ -235,18 +247,14 @@ bool LeeBase::is_placeable_no_intersection_bd(int x, int y, LeeNode::FoundBy fb)
     if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
         return false;
     }
-    // check with the node itself if it's placeable, it knows
-    /*if(!kMap->get_map()->at(x).at(y)->is_placeable()) {
-        claim(kMap->get_map()->at(x).at(y)->to_string(), kWarning);
-        //return false;
-    }*/
-    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::BLOCKED) {
-        return false;
+    // Grab these if they are the current element source/sink
+    if(is_source(x, y)) {
+        return true;
     }
-    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SOURCE) {
-        return false;
+    if(is_sink(x, y)) {
+        return true;
     }
-    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::TRACEBACK) {
+    if (kMap->get_map()->at(x).at(y)->get_type() != LeeNode::NONE) {
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
@@ -263,23 +271,24 @@ bool LeeBase::is_placeable_intersection_bd(int x, int y, LeeNode::FoundBy fb) {
     if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
         return false;
     }
-    // check with the node itself if it's placeable, it knows
-    /*if(!kMap->get_map()->at(x).at(y)->is_placeable()) {
-        return false;
-    }*/
+    // Grab these if they are the current element source/sink
+    if(is_source(x, y)) {
+        return true;
+    }
+    if(is_sink(x, y)) {
+        return true;
+    }
     if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::BLOCKED) {
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SOURCE) {
         return false;
     }
-    if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
-        claim("FB Argument: " + LeeNode::convert_found_by_to_string(fb) + "\t FB at Map Coords: " +
-                LeeNode::convert_found_by_to_string(kMap->get_map()->at(x).at(y)->get_found_by()), kNote);
+    if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SINK) {
         return false;
-    } else {
-        claim("Differing FB's: \tFB Argument: " + LeeNode::convert_found_by_to_string(fb) + "\t FB at Map Coords: " +
-                LeeNode::convert_found_by_to_string(kMap->get_map()->at(x).at(y)->get_found_by()), kNote);
+    }
+    if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
+        return false;
     }
     return true;
 }
@@ -309,7 +318,6 @@ bool LeeBase::is_adjacent_to_source(LeeNode c) {
 bool LeeBase::is_in_vector(LeeNode c) {
     for (int x = 0; x < kWaveFrontSource.size(); x++) {
         if (kWaveFrontSource.at(x).get_coord() == c.get_coord()) {
-            //claim("We have " + c.to_string() + " in vector", kDebug);
             return true;
         }
     }
