@@ -38,7 +38,7 @@ As we are operating within a framework provided, we will state some assumptions 
     A valid path is one where a source successfully connects to it's given sink as defined in the problem space given the arguments provided for program use.  If the defined source/sink cannot meet, the route is abandoned as a failure
     
  **Assumption 3:**
-    While we check for validity, we assume all input will be in the form of 0 to n-1.  Input that does not meet this assumption will not result in an error, and that route or problem object will be invalid
+    While we check for validity, we assume all input will be in the form of 0 to n-1, with the exception of the height and width of a map; those may be in form 1 to n.  Input that does not meet this assumption will not result in an error, and that route or problem object will be invalid
     
  **Assumption 4:**
         To continue on Assumption 3, we assume that if the region of blockage size + it's starting x/y coordinate exceeds that of the size of the map space, we abandon solving the problem.  We will assume that there are other problems in the problem definition file.
