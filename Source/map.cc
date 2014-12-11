@@ -2,7 +2,7 @@
 #include <string>
 #include "../Headers/leebase.h"
 #include "../Headers/leenode.h"
-#include "../Headers/Map.h"
+#include "../Headers/map.h"
 #include "../Headers/edge.h"
 #include "../Headers/claim.h"
 
