@@ -10,8 +10,9 @@ KORN=( 1.0 1.5)
 DIRECTORY=$1
 
 SPACE=" "
+TEST_FILES="${DIRECTORY}Tests/*.json"
 
-for f in $DIRECTORY
+for f in $TEST_FILES
 do
   for a in "${ALGORITHMS[@]}"
   do
@@ -26,14 +27,14 @@ do
         then
           for k in "${KORN[@]}"
           do
-            COMMAND="/Users/jason/ClionProjects/CS220_Framework/.grid_router $f"$SPACE$a$SPACE$d$SPACE$i$SPACE$k
+            COMMAND="$DIRECTORY./grid_router $f"$SPACE$a$SPACE$d$SPACE$i$SPACE$k
             echo ${COMMAND}
-            #"${COMMAND}"
+            "${COMMAND}"
           done
         else
-          COMMAND="/Users/jason/ClionProjects/CS220_Framework/.grid_router $f"$SPACE$a$SPACE$d$SPACE$i
+          COMMAND="$DIRECTORY./grid_router $f"$SPACE$a$SPACE$d$SPACE$i
           echo ${COMMAND}
-          #"${COMMAND}"
+          "${COMMAND}"
         fi
       done
     done

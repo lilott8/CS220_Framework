@@ -15,18 +15,19 @@ Utilities::Node::Node(Point coord, int cost):coord(coord.x,coord.y){
 }
 
 Utilities::Node::~Node() {
-    for(int i=0; i < connections.size(); i++) {
-        Edge* edge_to_remove = this->connections.at(i);
+    //delete(this);
+    //for(int i=0; i < connections.size(); i++) {
+        //Edge* edge_to_remove = this->connections.at(i);
         //Remove the edge from the node at the other end of the edge's connection list
-        if (edge_to_remove) {
-            edge_to_remove->get_end(this)->remove_connection(edge_to_remove);
+        //if (edge_to_remove) {
+            //edge_to_remove->get_end(this)->remove_connection(edge_to_remove);
             //Remove the edge from the current object's connection list
             //this->remove_connection(edge_to_remove);
             //Delete edge
-            delete edge_to_remove;
+            //delete edge_to_remove;
             //claim("We are not deleteing edges...", kError);
-        }
-    }
+        //}
+    //}
 }
 
 Utilities::Point Utilities::Node::get_coord() {

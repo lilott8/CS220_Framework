@@ -91,6 +91,26 @@ int main(int argc,char* argv[]) {
         claim("Enabling a Korn modifier of: " + to_string(korn_modifier), kDebug);
     }
 
+    const rlim_t kStackSize = 32 * 1024 * 1024;
+    struct rlimit rl;
+    int result;
+
+    result = getrlimit(RLIMIT_STACK, &rl);
+    if(result == 0) {
+        if(rl.rlim_cur < kStackSize) {
+            rl.rlim_cur = kStackSize;
+            result = setrlimit(RLIMIT_STACK, &rl);
+            if(result != 0) {
+                claim("We didn't set the stack size!", kWarning);
+            }
+        }
+    }
+
+    setrlimit(RLIMIT_STACK, &rl);
+
+
+
+
     claim("Working on problem: " + first_problem->get_name(), kNote);
     // Initializing a new map to project our solution on
     Map map = Map(first_problem);
