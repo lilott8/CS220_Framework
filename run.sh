@@ -7,33 +7,36 @@ INTERSECTION=( 0 1 )
 KORN=( 1.0 1.5)
 
 #File from input
-TEST_FILE=$1
+DIRECTORY=$1
 
 SPACE=" "
 
-for a in "${ALGORITHMS[@]}"
+for f in $DIRECTORY
 do
-  echo "******************"
-  echo "Starting "$a
-  echo "******************"
-  for d in "${DIRECTION[@]}"
+  for a in "${ALGORITHMS[@]}"
   do
-    for i in "${INTERSECTION[@]}"
+    echo "******************"
+    echo "Starting "$a
+    echo "******************"
+    for d in "${DIRECTION[@]}"
     do
-      if [ "$a" = "RUBEN" ]
-      then
-        for k in "${KORN[@]}"
-        do
-          COMMAND="./grid_router "$TEST_FILE$SPACE$a$SPACE$d$SPACE$i$SPACE$k
+      for i in "${INTERSECTION[@]}"
+      do
+        if [ "$a" = "ruben" ]
+        then
+          for k in "${KORN[@]}"
+          do
+            COMMAND="/Users/jason/ClionProjects/CS220_Framework/.grid_router $f"$SPACE$a$SPACE$d$SPACE$i$SPACE$k
+            echo ${COMMAND}
+            #"${COMMAND}"
+          done
+        else
+          COMMAND="/Users/jason/ClionProjects/CS220_Framework/.grid_router $f"$SPACE$a$SPACE$d$SPACE$i
           echo ${COMMAND}
-          "${COMMAND}"
-        done
-      else
-        COMMAND="./grid_router "$TEST_FILE$SPACE$a$SPACE$d$SPACE$i
-        echo ${COMMAND}
-          "${COMMAND}"
-      fi
+          #"${COMMAND}"
+        fi
+      done
     done
+    echo ""
   done
-  echo ""
 done

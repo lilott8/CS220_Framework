@@ -27,6 +27,11 @@ The defaults are as follows:
  - intersection: 1 | 0 (translates to true or false)
  - korn modifier: >= 1.0
  
+## Run.sh
+
+`Usage: ./run.sh /Absoulte/path/to/json/files/*.json`
+ There is a run.sh bash script that you may provide an absolute path to a directory and it will iterate over all json files in that directory.  It will automatically enumerate all the combinations of arguments and run them for you, all output is to stdout.
+ 
 ## Assumptions
 
 As we are operating within a framework provided, we will state some assumptions in an effort to remove any ambiguity
