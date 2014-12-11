@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include "../Headers/claim.h"
-#include "../Headers/LeeBase.h"
+#include "../Headers/leebase.h"
 
 using namespace Lee;
 using namespace Utilities;

@@ -2,6 +2,7 @@
 #include "../Headers/leebase.h"
 #include "../Headers/claim.h"
 #include "../Headers/ruben.h"
+#include "../Headers/comparators.h"
 
 using namespace Lee;
 using namespace Utilities;
