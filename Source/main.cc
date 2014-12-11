@@ -9,6 +9,7 @@
 #include "../Headers/hadlock.h"
 #include "../Headers/lee2bit.h"
 
+#include <sys/resource.h>
 #include <memory>
 
 using std::cerr;
