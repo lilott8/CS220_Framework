@@ -30,6 +30,7 @@ The defaults are as follows:
 ## Run.sh
 
 `Usage: ./run.sh /Absoulte/path/to/json/files/*.json`
+
  There is a run.sh bash script that you may provide an absolute path to a directory and it will iterate over all json files in that directory.  It will automatically enumerate all the combinations of arguments and run them for you, all output is to stdout.
  
 ## Assumptions
