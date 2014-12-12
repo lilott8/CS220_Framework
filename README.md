@@ -11,7 +11,7 @@ CS220 Project Framework
  6. [Analysis](#analysis)
  7. [Overview](#overview)
 
-## Project Group ##
+## Project Group<a name="project_group">
 
 Bryan Marsh
 
