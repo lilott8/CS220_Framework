@@ -2,22 +2,22 @@ CS220 Project Framework
 ===============
 ## Table of Contents:
 
- 1. [Project Group](#Group)
- 2. [Compiling the project](#Compiling)
- 3. [Program Usage](#Usage)
-     1. [Arguments Defined](#Argument)
- 4. [Running with the Script](#Run.sh)
- 5. [Assumptions](#Assumptions)
- 6. [Analysis](#Analysis)
- 7. [Overview](#Overview)
+ 1. [Project Group](#project_group)
+ 2. [Compiling the project](#compiling)
+ 3. [Program Usage](#usage)
+     1. [Arguments Defined](#arguments)
+ 4. [Running with the Script](#run.sh)
+ 5. [Assumptions](#assumptions)
+ 6. [Analysis](#analysis)
+ 7. [Overview](#overview)
 
-## Group ##
+## Project Group ##
 
 Bryan Marsh
 
 Jason Ott
 
-## Compiling ##
+## Compiling<a name="compiling">
 
 We provide both a make file and CMake which will handle all compilation.  For either build process, you **must** have a C++ 11 compiler.  *This program will _not_ compile unless it is compiled with a C++ 11 compiler.*
 
@@ -25,7 +25,7 @@ Supported Build Systems:
  - Make: `GNU Make 3.81`
  - CMake: `2.8.12.2`
 
-## Usage ##
+## Usage<a name="usage">
 
 `Usage: ./grid_router [<test_file> <algorithm> <bi-directional> <intersection> <korn modifier>]`
 `Example: ./grid_router ../Tests/debug.json lee 0 0 1.0`
@@ -37,7 +37,7 @@ The defaults are as follows:
  - intersection: false
  - korn modifier: 1.0
  
-### Argument space definition:
+### Argument space definition<a name="arguments">
 
  - test_file: any json file that follows the documented format
  - algorithm: lee | lee2bit | lee3bit | ruben | hadlock
@@ -45,7 +45,7 @@ The defaults are as follows:
  - intersection: 1 | 0 (translates to true or false)
  - korn modifier: >= 1.0
  
-## Run.sh
+## Run.sh<a name="run.sh">
 
 `Usage: ./run.sh /Absoulte/path/to/root/project/directory/`
 `Example: ./run.sh /Users/test/CS220_Framework/`
@@ -53,7 +53,7 @@ The defaults are as follows:
  There is a run.sh bash script that you may provide an absolute path to a directory and it will iterate over all json files in that directory.  It will automatically enumerate all the combinations of arguments and run them for you, all output is to stdout.  It assumes that the executable (./grid_router and Test/ are in the same parent directory.
  **This doesn't compile it for you, it only runs the program**
  
-## Assumptions
+## Assumptions<a name="assumptions">
 
 As we are operating within a framework provided, we will state some assumptions in an effort to remove any ambiguity
 
@@ -75,7 +75,7 @@ As we are operating within a framework provided, we will state some assumptions 
  **Assumption 6:**
     If a source and sink have the same coordinates, the route is deemed un-routable.
     
-## Stack Space Analysis:
+## Stack Space Analysis<a name="analysis">
 
 As we were testing we noticed some interesting behaviour with our implementation.  We noticed that with `Lee, Lee2Bit, and Lee3Bit` our recursive algorithm will segfault because of a stackoverflow.  We don't necessarily see this problem with `Ruben/Korn or Hadlock` because they are directed searches.  But we do know that if they fell back to BFS then they would segfault as well.  Because we utilize recursion to solve these problems, we were quickly overflowing our allocated stack space.  More specifically as the search space increased, the ability for our program to solve the problem decreased.
 
@@ -95,7 +95,7 @@ We can see that this is largely linear.  As we double the size of our stack we c
 
 Because Hadlock and Ruben/Korn use directed search, the analysis won't be as effective or interesting.  That is, unless they have to devolve to BFS, in which case we would see the same results as the Lee algorithms.
 
-## Project Overview
+## Project Overview<a name="overview">
 
 You will use this framework for the following projects:
 
