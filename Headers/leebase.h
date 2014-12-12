@@ -58,6 +58,7 @@ namespace Lee {
         deque<Path*> kPathBack;
         deque<LeeNode> kTraceBackSink;
         deque<LeeNode> kTraceBackSource;
+        int kMaxIteration = 0;
         bool kIntersectionEnabled = false;
         bool kBiDirectionEnabled = false;
         bool kValidPlacement;

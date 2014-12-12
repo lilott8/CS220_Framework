@@ -63,7 +63,14 @@ As we were testing we noticed some interesting behaviour with our implementation
 
 We noticed in testing that if our recursive algorithm searches the entire space of a map that has no blockages, we can have, at maximum, a grid-size of 135x135.  Which tells us that the max area that our recursive algorithm can explore on a stack size of 8mb is 15825 LeeNodes.  So we got a bit curious as to how our stack size affects the size of the grid we can explore using Lee's.
 
+Below is a table which details some findings for our search space given a particular stack size:
 
+|   |   |   |   |   |
+|---|---|---|---|---|
+|   |   |   |   |   |
+|   |   |   |   |   |
+|   |   |   |   |   |
+|   |   |   |   |   |
 
 ## Project Overview
 

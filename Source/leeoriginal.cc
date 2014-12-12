@@ -19,6 +19,8 @@ LeeOriginal::~LeeOriginal() {}
 void LeeOriginal::start(Route r) {
     LeeBase::start(r);
 
+    int i = 0;
+
     kWaveFrontSource.push_front(kSource);
 
     Path* p = new Path();
@@ -36,6 +38,7 @@ void LeeOriginal::start(Route r) {
     } else {
         solve_recursive(1);
     }
+    //claim("Total iteration: " + to_string(kMaxIteration), kNote);
     if(kTraceBackSource.size() > 0) {
         create_path_back();
     }
@@ -81,8 +84,7 @@ int LeeOriginal::solve_recursive(int iteration) {
         //claim("Adding: " + adjacent.at(x).to_string(), kDebug);
     }
 
-    //claim("iteration: " + to_string(iteration), kNote);
-    //claim("queue size:" + to_string(kWaveFrontSource.size()), kNote);
+    kMaxIteration = iteration;
 
     solve_recursive(iteration + 1);
 
