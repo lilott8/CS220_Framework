@@ -79,7 +79,9 @@ As we are operating within a framework provided, we will state some assumptions 
 
 As we were testing we noticed some interesting behaviour with our implementation.  We noticed that with `Lee, Lee2Bit, and Lee3Bit` our recursive algorithm will segfault because of a stackoverflow.  We don't necessarily see this problem with `Ruben/Korn or Hadlock` because they are directed searches.  But we do know that if they fell back to BFS then they would segfault as well.  Because we utilize recursion to solve these problems, we were quickly overflowing our allocated stack space.  More specifically as the search space increased, the ability for our program to solve the problem decreased.
 
-We noticed in testing that if our recursive algorithm searches the entire space of a map that has no blockages, we can have, at maximum, a grid-size of 135x135.  Which tells us that the max area that our recursive algorithm can explore on a stack size of 8mb is 15825 LeeNodes.  So we got a bit curious as to how our stack size affects the size of the grid we can explore using Lee's.
+We noticed in testing that if our recursive algorithm searches the entire space of a map that has no blockages, we can have, at maximum, a grid-size of 136x136.  Which tells us that the max area that our recursive algorithm can explore on a stack size of 8mb is 15,825 LeeNodes.  So we got a bit curious as to how our stack size affects the size of the grid we can explore using Lee's.
+
+Most of our variables are actually stored in the heap as they are global in scope.  But the sheer number of recursive calls made is what forces a stackoverflow.
 
 Below is a table which details some findings for our search space given a particular stack size:
 
