@@ -7,7 +7,6 @@ using namespace Utilities;
 using namespace std;
 
 LeeOriginal::LeeOriginal() {
-
 }
 
 LeeOriginal::LeeOriginal(Map *m) {

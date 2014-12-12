@@ -19,8 +19,9 @@ namespace Lee {
         int solve_recursive(int);
 
         int solve_recursive_bi_directional(int);
-        vector<LeeNode> get_adjacent_coordinates(LeeNode, int);
-        LeeNode calculate_metric(LeeNode, int);
+        vector<LeeNode> get_adjacent_coordinates(LeeNode, int, LeeNode::FoundBy);
+        LeeNode calculate_metric(LeeNode, int, LeeDirection);
     };
 }
 #endif //_LEE_2_BIT_H_
+
