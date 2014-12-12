@@ -50,8 +50,8 @@ The defaults are as follows:
 `Usage: ./run.sh /Absoulte/path/to/root/project/directory/`
 `Example: ./run.sh /Users/test/CS220_Framework/`
 
- There is a run.sh bash script that you may provide an absolute path to a directory and it will iterate over all json files in that directory.  It will automatically enumerate all the combinations of arguments and run them for you, all output is to stdout.  It assumes that the executable (./grid_router and Test/ are in the same parent directory.
- **This doesn't compile it for you, it only runs the program**
+ There is a run.sh bash script that you may use.  To run it you must provide an absolute path to the directory where ./grid_router is located.  The ./Tests directory must be located in the same directory as the grid_router executable.  It will then find the tests and automatically enumerate all the combinations of arguments and run them for you, all output is to stdout.  It assumes that the executable (./grid_router and Test/ are in the same directory.)
+ **This doesn't compile it for you, it only runs the executable**
  
 ## Assumptions<a name="assumptions">
 
