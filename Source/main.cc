@@ -36,7 +36,7 @@ int main(int argc,char* argv[]) {
 		exit(1);
 	}
 	Utilities::ProblemObject* first_problem = new Utilities::ProblemObject(std::string(argv[1]));
-	// EDIT FROM HERE DOWN
+    // EDIT FROM HERE DOWN
 
     // Defaults for our variables
     // they get altered in the switch below
@@ -109,13 +109,9 @@ int main(int argc,char* argv[]) {
 
     setrlimit(RLIMIT_STACK, &rl);
 
-
-
-
     claim("Working on problem: " + first_problem->get_name(), kNote);
     // Initializing a new map to project our solution on
     Map map = Map(first_problem);
-    //map.print_map();
 
     // Set the map of our algorithm
     algorithm->set_map(&map);
@@ -127,9 +123,7 @@ int main(int argc,char* argv[]) {
         claim("Working on a new connection: " + map.connection_to_string(work), kNote);
         // Solve the route
         algorithm->start(work);
-        // Clear the map out
-        //map.zero_map();
-        //map.print_map();
+
         if(algorithm->get_routed_status()) {
             claim("A valid route: ", kNote);
             algorithm->get_path_back().back()->print();
@@ -148,13 +142,11 @@ int main(int argc,char* argv[]) {
 unique_ptr<LeeBase> child_factory(Algorithm a) {
     switch(a) {
         default:
-        case LEE:
-            return unique_ptr<LeeOriginal>(new LeeOriginal());
+        case LEE: return unique_ptr<LeeOriginal>(new LeeOriginal());
         case LEE2BIT: return unique_ptr<Lee2Bit> (new Lee2Bit());
         case LEE3BIT: return unique_ptr<Lee3Bit> (new Lee3Bit());
         case RUBEN: return unique_ptr<Ruben> (new Ruben());
-        case HADLOCK:
-            return unique_ptr<Hadlock>(new Hadlock());
+        case HADLOCK: return unique_ptr<Hadlock>(new Hadlock());
     }
 }
 

@@ -19,8 +19,6 @@ LeeOriginal::~LeeOriginal() {}
 void LeeOriginal::start(Route r) {
     LeeBase::start(r);
 
-    int i = 0;
-
     kWaveFrontSource.push_front(kSource);
 
     Path* p = new Path();
@@ -38,8 +36,8 @@ void LeeOriginal::start(Route r) {
     } else {
         solve_recursive(1);
     }
-    //claim("Total iteration: " + to_string(kMaxIteration), kNote);
     if(kTraceBackSource.size() > 0) {
+        kTraceBackSource.push_back(kSource);
         create_path_back();
     }
 }
@@ -83,6 +81,7 @@ int LeeOriginal::solve_recursive(int iteration) {
         kWaveFrontSource.push_back(adjacent.at(x));
         //claim("Adding: " + adjacent.at(x).to_string(), kDebug);
     }
+    adjacent.clear();
 
     kMaxIteration = iteration;
 
@@ -117,6 +116,7 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
                 + kSource.coords_to_string() + "->"
                 + kSink.coords_to_string(), kWarning);
         clear_queues();
+        successful_routing = false;
         return iteration;
     }
 
@@ -132,7 +132,7 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
             //claim("Source Queue size: " + to_string(kWaveFrontSource.size()), kNote);
             //claim("Source is searching: " + curr.to_string(), kNote);
             found_by = LeeNode::FoundBy::FSOURCE;
-            if (curr.get_found_by() == LeeNode::FoundBy::FSINK) {
+            if (curr.get_found_by() == LeeNode::FoundBy::FSINK || is_sink(curr)) {
                 //claim("We have converged!", kWarning);
                 found_intersection = true;
                 kTraceBackSource.push_back(curr);
@@ -151,7 +151,7 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
             //claim("Sink Queue size: " + to_string(kWaveFrontSink.size()), kNote);
             //claim("Sink is searching: " + curr.to_string(), kNote);
             found_by = LeeNode::FoundBy::FSINK;
-            if (curr.get_found_by() == LeeNode::FoundBy::FSOURCE) {
+            if (curr.get_found_by() == LeeNode::FoundBy::FSOURCE || is_source(curr)) {
                 //claim("We have converged!", kWarning);
                 found_intersection = true;
                 kTraceBackSink.push_back(curr);
@@ -182,12 +182,14 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
         }
     }
 
+    kMap->print_map();
+
     solve_recursive_bi_directional(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
     if (iteration % 2 == 0) {
         // Source exploring
-        if (kTraceBackSource.size() > 0 && curr.get_cost() <= kTraceBackSource.back().get_cost()
+        if (kTraceBackSource.size() > 0 && curr.get_leewave() <= kTraceBackSource.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSource.back())) {
             kTraceBackSource.push_back(curr);
             //claim("adding: "+ curr.coords_to_string(), kDebug);
@@ -198,7 +200,7 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
         }
     } else {
         // Sink exploring
-        if (kTraceBackSink.size() > 0 && curr.get_cost() <= kTraceBackSink.back().get_cost()
+        if (kTraceBackSink.size() > 0 && curr.get_leewave() <= kTraceBackSink.back().get_leewave()
                 && is_adjacent(curr, kTraceBackSink.back())) {
             kTraceBackSink.push_back(curr);
             //claim("adding: "+ curr.coords_to_string(), kDebug);

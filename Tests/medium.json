@@ -1,10 +1,10 @@
 {
   "file_name": "test_sample",
 
-  "height": 136,
-  "width": 136,
+  "height": 131,
+  "width": 131,
 
   "routeList": [
-    {"name": "route2", "source_x": 0, "source_y": 0, "sink_x": 135, "sink_y": 135}
+    {"name": "route2", "source_x": 0, "source_y": 0, "sink_x": 130, "sink_y": 130}
   ]
 }

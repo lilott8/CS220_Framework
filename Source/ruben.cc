@@ -9,19 +9,15 @@ using namespace Utilities;
 using namespace std;
 
 Ruben::Ruben() {
-    //LeeBase::LeeBase();
     kKornModifier = 1;
 }
 
 Ruben::Ruben(Map *m, double korn) {
-    //LeeBase::LeeBase();
     LeeBase::set_map(m);
     kKornModifier = korn;
 }
 
-Ruben::~Ruben() {
-    //LeeBase::~LeeBase();
-}
+Ruben::~Ruben() {}
 
 void Ruben::start(Route r) {
     LeeBase::start(r);
@@ -54,7 +50,8 @@ void Ruben::start(Route r) {
     }
     if(kTraceBackSource.size() > 0) {
         create_path_back();
-    }}
+    }
+}
 
 int Ruben::solve_recursive(int iteration) {
 
@@ -182,7 +179,7 @@ int Ruben::solve_recursive_bi_directional(int iteration) {
     // Handle the trace_back generation for the algorithm
     if (iteration % 2 == 0) {
         if (kTraceBackSource.size() > 0 && curr.get_leewave() <= kTraceBackSource.back().get_leewave()
-                && is_adjacent(curr, kTraceBackSource.back()) && curr.get_found_by() == kFoundByFlag) {
+                && is_adjacent(curr, kTraceBackSource.back())) {
             kTraceBackSource.push_back(curr);
             if(kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SINK &&
                     kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SOURCE) {
@@ -191,7 +188,7 @@ int Ruben::solve_recursive_bi_directional(int iteration) {
         }
     } else {
         if (kTraceBackSink.size() > 0 && curr.get_leewave() <= kTraceBackSink.back().get_leewave()
-                && is_adjacent(curr, kTraceBackSink.back()) && curr.get_found_by() == kFoundByFlag) {
+                && is_adjacent(curr, kTraceBackSink.back())) {
             kTraceBackSink.push_back(curr);
             if(kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SINK &&
                     kMap->get_map()->at(curr.get_x()).at(curr.get_y())->get_type() != LeeNode::NodeType::SOURCE) {

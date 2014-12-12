@@ -35,6 +35,8 @@ void LeeBase::enable_bi_direction() {
 void LeeBase::start(Route route) {
     // Reset our queues so that previous entries don't show up!
     clear_queues();
+    // just in case!
+    kMap->zero_map();
     successful_routing = false;
     kSource = route.source;
     kMap->get_map()->at(kSource.get_x()).at(kSource.get_y())->set_type(LeeNode::NodeType::SOURCE);
@@ -253,6 +255,9 @@ bool LeeBase::is_placeable_no_intersection_bd(int x, int y, LeeNode::FoundBy fb)
     if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
         return false;
     }
+    if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
+        return false;
+    }
     // Grab these if they are the current element source/sink
     if(is_source(x, y)) {
         return true;
@@ -261,9 +266,6 @@ bool LeeBase::is_placeable_no_intersection_bd(int x, int y, LeeNode::FoundBy fb)
         return true;
     }
     if (kMap->get_map()->at(x).at(y)->get_type() != LeeNode::NONE) {
-        return false;
-    }
-    if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
         return false;
     }
     return true;
@@ -275,6 +277,9 @@ bool LeeBase::is_placeable_intersection_bd(int x, int y, LeeNode::FoundBy fb) {
         return false;
     }
     if (y > kMap->get_map()->at(0).size() - 1 || y < 0) {
+        return false;
+    }
+    if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
         return false;
     }
     // Grab these if they are the current element source/sink
@@ -291,9 +296,6 @@ bool LeeBase::is_placeable_intersection_bd(int x, int y, LeeNode::FoundBy fb) {
         return false;
     }
     if (kMap->get_map()->at(x).at(y)->get_type() == LeeNode::SINK) {
-        return false;
-    }
-    if (kMap->get_map()->at(x).at(y)->get_found_by() == fb) {
         return false;
     }
     return true;
@@ -421,38 +423,16 @@ void LeeBase::create_path_back() {
     // start with the source
     reverse(kTraceBackSource.begin(), kTraceBackSource.end());
 
-    LeeNode start = kTraceBackSource.front();
-
-    int size = (int)kTraceBackSource.size()-1;
-
-    // We start at 1 because we already have "start" as 0
-    int x = 1;
-    while(x < size) {
-
-        // Look for x-axis changes
-        while(start.get_x() == kTraceBackSource.at(x).get_x() && x < size) {
-            // move through the deque until we have an element in which the y-axis changes
-            x+=1;
-        }
-        //claim("Attempting to create a ps of:" + start.coords_to_string() + "\t " + kTraceBackSource.at(x-1).coords_to_string(), kNote);
-        if(x == size) {
-            kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.back().get_coord()));
+    for(int x = 0;x < kTraceBackSource.size();x++) {
+        if(x+1 < kTraceBackSource.size()) {
+            if(!is_same_coordinate(kTraceBackSource.at(x), kTraceBackSource.at(x+1)) && !is_sink(kTraceBackSource.at(x))) {
+                kPathBack.back()->add_segment(new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.at(x + 1).get_coord()));
+            }
         } else {
-            kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.at(x - 1).get_coord()));
+            if(is_same_coordinate(kTraceBackSource.at(x), kTraceBackSource.back()) && !is_sink(kTraceBackSource.at(x))) {
+                kPathBack.back()->add_segment(new PathSegment(kTraceBackSource.at(x).get_coord(), kTraceBackSource.back().get_coord()));
+            }
         }
-        start = kTraceBackSource.at(x-1);
-        // Look for y-axis changes
-        while(start.get_y() == kTraceBackSource.at(x).get_y() && x < size) {
-            // move through the deque until we have an element in which the x-axis changes
-            x+=1;
-        }
-        //claim("Attempting to create a ps of:" + start.coords_to_string() + "\t " + kTraceBackSource.at(x-1).coords_to_string(), kNote);
-        if(x == size) {
-            kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.back().get_coord()));
-        } else {
-            kPathBack.back()->add_segment(new PathSegment(start.get_coord(), kTraceBackSource.at(x - 1).get_coord()));
-        }
-        start = kTraceBackSource.at(x-1);
     }
 }
 
