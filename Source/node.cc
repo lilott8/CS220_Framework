@@ -15,19 +15,18 @@ Utilities::Node::Node(Point coord, int cost):coord(coord.x,coord.y){
 }
 
 Utilities::Node::~Node() {
-    //delete(this);
-    //for(int i=0; i < connections.size(); i++) {
-        //Edge* edge_to_remove = this->connections.at(i);
+    for(int i=0; i < connections.size(); i++) {
+        Edge *edge_to_remove = this->connections.at(i);
         //Remove the edge from the node at the other end of the edge's connection list
-        //if (edge_to_remove) {
-            //edge_to_remove->get_end(this)->remove_connection(edge_to_remove);
+        if (edge_to_remove) {
+            edge_to_remove->get_end(this)->remove_connection(edge_to_remove);
             //Remove the edge from the current object's connection list
-            //this->remove_connection(edge_to_remove);
+            this->remove_connection(edge_to_remove);
             //Delete edge
-            //delete edge_to_remove;
+            delete edge_to_remove;
             //claim("We are not deleteing edges...", kError);
-        //}
-    //}
+        }
+    }
 }
 
 Utilities::Point Utilities::Node::get_coord() {
@@ -133,16 +132,16 @@ void Utilities::Node::remove_connection(Edge* connection) {
     if (nothing_removed) {
 
     }
-	  vector<Edge*>::iterator connections_it = connections.begin();
-      //for(int i = 0; i < this->connections.size(); i++) {
-      for(/* connections_it */;connections_it != connections.end();connections_it++) {
-            if((*connections_it) == connection) {
-                  nothing_removed = false;
-				  connections.erase(connections_it);
-				  if (connections_it == connections.end()) { break; }
-            }
-      }
-      if(nothing_removed) {
-            //TODO: Add debug warning if it gets here without a delete
-      }
+    vector<Edge*>::iterator connections_it = connections.begin();
+    //for(int i = 0; i < this->connections.size(); i++) {
+    for(/* connections_it */;connections_it != connections.end();connections_it++) {
+        if((*connections_it) == connection) {
+            nothing_removed = false;
+            connections.erase(connections_it);
+            if (connections_it == connections.end()) { break; }
+        }
+    }
+    if(nothing_removed) {
+        //TODO: Add debug warning if it gets here without a delete
+    }
 }

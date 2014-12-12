@@ -48,23 +48,28 @@ void LeeBase::start(Route route) {
 void LeeBase::start() {/** Not Used **/}
 
 bool LeeBase::is_sink(LeeNode c) {
-    return kSink.get_coord() == c.get_coord();
+    return is_sink(c.get_x(), c.get_y());
+    //return kSink.get_coord() == c.get_coord();
 }
 
 bool LeeBase::is_sink(int x, int y) {
-    LeeNode ln = LeeNode();
-    ln.set_coord(x, y);
-    return is_sink(ln);
+    //LeeNode ln = LeeNode();
+    //ln.set_coord(x, y);
+    //return is_sink(ln);
+    return kSink.get_x() == x && kSink.get_y() == y;
+
 }
 
 bool LeeBase::is_source(LeeNode c) {
-    return kSource.get_coord() == c.get_coord();
+    return is_source(c.get_x(), c.get_y());
+    //return kSource.get_coord() == c.get_coord();
 }
 
 bool LeeBase::is_source(int x, int y) {
-    LeeNode ln = LeeNode();
-    ln.set_coord(x, y);
-    return is_source(ln);
+    //LeeNode ln = LeeNode();
+    //ln.set_coord(x, y);
+    //return is_source(ln);
+    return kSource.get_x() == x && kSource.get_y() == y;
 }
 
 int LeeBase::calculate_manhattan_distance(LeeNode a, LeeNode b) {

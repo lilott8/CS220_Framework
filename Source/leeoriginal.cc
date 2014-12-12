@@ -81,6 +81,9 @@ int LeeOriginal::solve_recursive(int iteration) {
         //claim("Adding: " + adjacent.at(x).to_string(), kDebug);
     }
 
+    //claim("iteration: " + to_string(iteration), kNote);
+    //claim("queue size:" + to_string(kWaveFrontSource.size()), kNote);
+
     solve_recursive(iteration + 1);
 
     // Handle the trace_back generation for the algorithm
