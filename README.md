@@ -1,13 +1,23 @@
 CS220 Project Framework
 ===============
+## Table of Contents:
 
-## Project Group
+ 1. [Project Group](#Group)
+ 2. [Compiling the project](#Compiling)
+ 3. [Program Usage](#Usage)
+     1. [Arguments Defined](#Argument)
+ 4. [Running with the Script](#Run.sh)
+ 5. [Assumptions](#Assumptions)
+ 6. [Analysis](#Analysis)
+ 7. [Overview](#Overview)
+
+## Group ##
 
 Bryan Marsh
 
 Jason Ott
 
-## Compiling
+## Compiling ##
 
 We provide both a make file and CMake which will handle all compilation.  For either build process, you **must** have a C++ 11 compiler.  *This program will _not_ compile unless it is compiled with a C++ 11 compiler.*
 
@@ -15,7 +25,7 @@ Supported Build Systems:
  - Make: `GNU Make 3.81`
  - CMake: `2.8.12.2`
 
-## Usage
+## Usage ##
 
 `Usage: ./grid_router [<test_file> <algorithm> <bi-directional> <intersection> <korn modifier>]`
 `Example: ./grid_router ../Tests/debug.json lee 0 0 1.0`
