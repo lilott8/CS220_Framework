@@ -64,6 +64,7 @@ int LeeOriginal::solve_recursive(int iteration) {
     if (is_sink(curr)) {
         // add the sink to the trace_back
         kTraceBackSource.push_back(curr);
+        successful_routing = true;
         //kMap->get_map()->at(curr.get_x()).at(curr.get_y())->set_type(LeeNode::NodeType::TRACEBACK);
         //claim("We found the sink: " + curr.to_string(), kDebug);
         return iteration;
@@ -78,11 +79,6 @@ int LeeOriginal::solve_recursive(int iteration) {
     for (int x = 0; x < adjacent.size(); x++) {
         kWaveFrontSource.push_back(adjacent.at(x));
         //claim("Adding: " + adjacent.at(x).to_string(), kDebug);
-    }
-    adjacent.clear();
-
-    if(iteration % 200 == 0) {
-        //kMap->print_map();
     }
 
     solve_recursive(iteration + 1);
