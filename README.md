@@ -7,6 +7,14 @@ Bryan Marsh
 
 Jason Ott
 
+## Compiling
+
+We provide both a make file and CMake which will handle all compilation.  For either build process, you **must** have a C++ 11 compiler.  *This program will **not** compile unless it is compiled with a C++ 11 compiler.*
+
+Supported Build Systems:
+ - Make: `GNU Make 3.81`
+ - CMake: `2.8.12.2`
+
 ## Usage
 
 `Usage: ./grid_router [<test_file> <algorithm> <bi-directional> <intersection> <korn modifier>]`
