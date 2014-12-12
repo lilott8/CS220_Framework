@@ -181,7 +181,7 @@ int LeeOriginal::solve_recursive_bi_directional(int iteration) {
         }
     }
 
-    kMap->print_map();
+    //kMap->print_map();
 
     solve_recursive_bi_directional(iteration + 1);
 
