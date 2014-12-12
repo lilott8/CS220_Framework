@@ -65,12 +65,17 @@ We noticed in testing that if our recursive algorithm searches the entire space 
 
 Below is a table which details some findings for our search space given a particular stack size:
 
-|   |   |   |   |   |
-|---|---|---|---|---|
-|   |   |   |   |   |
-|   |   |   |   |   |
-|   |   |   |   |   |
-|   |   |   |   |   |
+| Test # 	| Grid Size 	| Stack Size 	| Search Space 	| Recursion Depth 	|
+|--------	|-----------	|------------	|--------------	|-----------------	|
+| 1      	| 136x136   	| 8mb        	| 18,225       	| 18,496          	|
+| 2      	| 167x167   	| 16mb       	| 27,889       	| 28,224          	|
+| 3      	| 237x237   	| 32mb       	| 56,169       	| 56,169          	|
+| 4      	| 335x335   	| 64mb       	| 112,225      	| 112,896         	|
+| 5      	| 475x475   	| 128mb      	| 225,625      	| 226,576         	|
+
+We can see that this is largely linear.  As we double the size of our stack we can search about twice as much space and our recursion depth increase by twice as much as well.  As we would expect, there is a linear relationship between the search space, recursion depth and stack size.
+
+Because Hadlock and Ruben/Korn use directed search, the analysis won't be as effective or interesting.  That is, unless they have to devolve to BFS, in which case we would see the same results as the Lee algorithms.
 
 ## Project Overview
 
